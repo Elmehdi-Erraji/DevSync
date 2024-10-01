@@ -61,6 +61,7 @@
     </table>
 
     <a href="userForm.jsp" class="btn btn-primary">Add New User</a>
+    <a href="home" class="btn btn-info">Back to Home</a>
 </div>
 </body>
 </html>
