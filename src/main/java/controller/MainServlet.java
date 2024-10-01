@@ -24,8 +24,16 @@ public class MainServlet extends HttpServlet {
             case "/home":
                 request.getRequestDispatcher("/home").forward(request, response); // Forward to HomeServlet
                 break;
+            case "/login":
+                request.getRequestDispatcher("/login").forward(request, response);
+                break;
+
+                case "/register":
+                request.getRequestDispatcher("/register").forward(request, response);
+                break;
+
             default:
-                response.sendError(HttpServletResponse.SC_NOT_FOUND); // 404 if action doesn't match
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 break;
         }
     }
