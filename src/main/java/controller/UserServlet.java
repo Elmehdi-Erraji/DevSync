@@ -33,12 +33,14 @@ public class UserServlet extends HttpServlet {
         if (action == null) {
             List<User> userList = userService.findAllUsers();
             request.setAttribute("userList", userList);
-            request.getRequestDispatcher("views/userList.jsp").forward(request, response);
+            request.getRequestDispatcher("userList.jsp").forward(request, response);
         } else if (action.equals("edit")) {
             Long id = Long.parseLong(request.getParameter("id"));
             User user = userService.findUserById(id);
             request.setAttribute("user", user);
-            request.getRequestDispatcher("views/userForm.jsp").forward(request, response);
+            request.getRequestDispatcher("views/dashboard/create.jsp").forward(request, response);
+        } else if (action.equals("create")) {
+            request.getRequestDispatcher("views/dashboard/create.jsp").forward(request, response);
         }
     }
 

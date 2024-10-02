@@ -28,9 +28,9 @@ public class MainServlet extends HttpServlet {
                 request.getRequestDispatcher("/login").forward(request, response);
                 break;
 
-                case "/register":
+                /*case "/register":
                 request.getRequestDispatcher("/register").forward(request, response);
-                break;
+                break;*/
 
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
