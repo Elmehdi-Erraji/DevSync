@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import model.enums.TaskStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -37,7 +38,7 @@ public class Task {
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private List<Tag> tags;
+    private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<Request> requests;
