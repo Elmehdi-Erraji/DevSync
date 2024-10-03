@@ -1,4 +1,4 @@
-package controller;
+package web.controller;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -7,11 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/register")
-public class registerServlet extends HttpServlet {
+@WebServlet("/login")
+public class loginServlet  extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("views/auth/register.jsp").forward(request, response);
+        request.getRequestDispatcher("views/auth/login.jsp").forward(request, response);
     }
 }

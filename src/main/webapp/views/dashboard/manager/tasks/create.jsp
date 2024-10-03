@@ -1,9 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
-<%@ page import="model.Task" %>
-<%@ page import="model.User" %>
-<%@ page import="model.Tag" %>
-<%@ page import="model.enums.Role" %>
+<%@ page import="domain.Task" %>
+<%@ page import="domain.User" %>
+<%@ page import="domain.Tag" %>
+<%@ page import="domain.enums.Role" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 

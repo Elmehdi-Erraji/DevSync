@@ -1,7 +1,7 @@
-package controller.manager;
+package web.controller.manager;
 
-import model.User;
-import model.enums.Role;
+import domain.User;
+import domain.enums.Role;
 import service.UserService;
 
 import javax.servlet.ServletException;

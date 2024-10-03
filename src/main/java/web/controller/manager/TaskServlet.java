@@ -1,9 +1,9 @@
-package controller.manager;
+package web.controller.manager;
 
-import model.Task;
-import model.Tag;
-import model.User;
-import model.enums.TaskStatus;
+import domain.Task;
+import domain.Tag;
+import domain.User;
+import domain.enums.TaskStatus;
 import service.TaskService;
 import service.TagService;
 import service.UserService;

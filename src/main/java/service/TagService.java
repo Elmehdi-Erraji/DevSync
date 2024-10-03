@@ -3,7 +3,7 @@ package service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import model.Tag;
+import domain.Tag;
 import repository.TagRepository;
 
 import java.util.List;

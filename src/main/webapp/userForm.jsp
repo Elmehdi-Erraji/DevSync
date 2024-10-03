@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="model.User" %>
+<%@ page import="domain.User" %>
 <%
     // Check if we are editing an existing user
     User user = (User) request.getAttribute("user"); // Assuming you set the user object in request scope

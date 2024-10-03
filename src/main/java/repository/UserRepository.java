@@ -3,7 +3,7 @@ package repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
-import model.User;
+import domain.User;
 
 import java.util.List;
 

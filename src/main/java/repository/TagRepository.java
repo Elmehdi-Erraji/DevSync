@@ -1,6 +1,6 @@
 package repository;
 
-import model.Tag;
+import domain.Tag;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;

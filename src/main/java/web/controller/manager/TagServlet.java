@@ -1,6 +1,6 @@
-package controller.manager;
+package web.controller.manager;
 
-import model.Tag;
+import domain.Tag;
 import service.TagService;
 
 import javax.servlet.ServletException;

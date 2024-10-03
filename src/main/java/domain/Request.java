@@ -1,9 +1,9 @@
-package model;
+package domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import model.enums.RequestStatus;
+import domain.enums.RequestStatus;
 
 import java.time.LocalDateTime;
 
