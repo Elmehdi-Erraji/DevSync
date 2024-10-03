@@ -1,3 +1,4 @@
+/*
 package controller;
 
 import model.User;
@@ -33,12 +34,14 @@ public class UserServlet extends HttpServlet {
         if (action == null) {
             List<User> userList = userService.findAllUsers();
             request.setAttribute("userList", userList);
-            request.getRequestDispatcher("views/userList.jsp").forward(request, response);
+            request.getRequestDispatcher("userList.jsp").forward(request, response);
         } else if (action.equals("edit")) {
             Long id = Long.parseLong(request.getParameter("id"));
             User user = userService.findUserById(id);
             request.setAttribute("user", user);
-            request.getRequestDispatcher("views/userForm.jsp").forward(request, response);
+            request.getRequestDispatcher("userForm.jsp").forward(request, response);
+        } else if (action.equals("create")) {
+            request.getRequestDispatcher("userForm.jsp").forward(request, response);
         }
     }
 
@@ -76,3 +79,4 @@ public class UserServlet extends HttpServlet {
         response.sendRedirect("users");
     }
 }
+*/

@@ -2,70 +2,71 @@ package repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-import domain.User;
+import domain.Task;
+
 
 import java.util.List;
 
-public class UserRepository {
+public class TaskRepository {
+    private EntityManager entityManager;
 
-    private final EntityManager entityManager;
-
-    public UserRepository(EntityManager entityManager) {
+    public TaskRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
-    public void insertUser(User user) {
+    public List<Task> findAllTasks() {
+        Query query = entityManager.createQuery("SELECT t FROM Task t", Task.class);
+        return (List<Task>) ((TypedQuery<?>) query).getResultList();
+    }
+
+    public Task findTaskById(Long id) {
+        return entityManager.find(Task.class, id);
+    }
+
+    public void insertTask(Task task) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
-            entityManager.persist(user);
+            entityManager.persist(task);
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            throw e;
         }
     }
 
-    public void updateUser(User user) {
+    public void updateTask(Task task) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
-            entityManager.merge(user);
+            entityManager.merge(task);
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            throw e;
         }
     }
 
-    public void deleteUser(Long userId) {
+    public void deleteTask(Long id) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
-            User user = entityManager.find(User.class, userId);
-            if (user != null) {
-                entityManager.remove(user);
+            Task task = findTaskById(id);
+            if (task != null) {
+                entityManager.remove(task);
             }
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            throw e;
         }
-    }
-
-    public User findUserById(Long userId) {
-        return entityManager.find(User.class, userId);
-    }
-
-    public List<User> findAllUsers() {
-        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u", User.class);
-        return query.getResultList();
     }
 }

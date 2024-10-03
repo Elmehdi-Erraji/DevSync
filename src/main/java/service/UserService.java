@@ -4,7 +4,7 @@ package service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import model.User;
+import domain.User;
 import repository.UserRepository;
 
 import java.util.List;

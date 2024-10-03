@@ -1,21 +1,22 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="model.User" %>
+<%@ page import="domain.User" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Log In</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon">
+
+    <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon">
 
     <!-- Link to CSS -->
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/app.min.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/icons.min.css">
 
-    <!-- SweetAlert CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
 
     <!-- JavaScript Files -->
     <script src="${pageContext.request.contextPath}/js/app.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="authentication-bg position-relative">
 <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5 position-relative">

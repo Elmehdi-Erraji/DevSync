@@ -1,4 +1,4 @@
-package controller;
+package web.controller;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,6 +30,10 @@ public class MainServlet extends HttpServlet {
 
                 case "/register":
                 request.getRequestDispatcher("/register").forward(request, response);
+                break;
+
+            case "/manager/users":
+                request.getRequestDispatcher("/manager/users").forward(request, response);
                 break;
 
             default:
