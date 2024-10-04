@@ -5,7 +5,7 @@
     <meta content="Mehdi" name="author" />
 
     <!-- App favicon -->
-    <link rel="icon" href="${pageContext.request.contextPath}images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon">
 
     <!-- Theme Config Js -->
     <script src="${pageContext.request.contextPath}/js/config.js"></script>
