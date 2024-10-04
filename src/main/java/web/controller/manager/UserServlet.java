@@ -77,7 +77,7 @@ public class UserServlet extends HttpServlet {
             User user = new User();
             user.setUsername(username);
             user.setEmail(email);
-            user.setDailyTokens(2); // Default tokens
+            user.setDailyTokens(2);
 
             // Set the role in the User object
             try {
@@ -111,7 +111,6 @@ public class UserServlet extends HttpServlet {
         response.sendRedirect("users?status=success"); // Redirect after processing
     }
 
-    // Method to hash password using SHA-256
     private String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -132,8 +131,6 @@ public class UserServlet extends HttpServlet {
         }
     }
 
-
-    // Delete user
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long id = Long.parseLong(request.getParameter("id"));
