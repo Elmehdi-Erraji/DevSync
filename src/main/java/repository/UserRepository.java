@@ -68,4 +68,15 @@ public class UserRepository {
         TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u", User.class);
         return query.getResultList();
     }
+
+    public User findByEmail(String email) {
+        try {
+            TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
+            query.setParameter("email", email);
+            return query.getSingleResult();  // Return the user if found
+        } catch (Exception e) {
+            // If no user is found, return null
+            return null;
+        }
+    }
 }

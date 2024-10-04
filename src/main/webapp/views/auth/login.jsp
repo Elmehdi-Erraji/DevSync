@@ -35,7 +35,7 @@
                                     <p class="text-muted mb-3">Enter your email address and password to access account.</p>
 
                                     <!-- Login Form -->
-                                    <form method="POST" action="${pageContext.request.contextPath}/login">
+                                    <form method="POST" action="login">
                                         <div class="mb-3">
                                             <label for="email" class="form-label">Email address</label>
                                             <input class="form-control" type="email" name="email" id="email" placeholder="Enter your email" required>
