@@ -1,5 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="domain.User" %>
+<%
+    HttpSession currentSession = request.getSession(false); // Use a different variable name if needed
+    String errorMessage = null;
+    if (currentSession != null) {
+        errorMessage = (String) currentSession.getAttribute("errorMessage");
+        currentSession.removeAttribute("errorMessage"); // Clear the message after retrieving it
+    }
+%>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,12 +19,26 @@
     <!-- Link to CSS -->
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/app.min.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
+    <script>
+        <%
+            if (errorMessage != null) {
+        %>
+        console.log("Error: <%= errorMessage %>");
+        <%
+            } else {
+        %>
+        console.log("No error");
+        <%
+            }
+        %>
+    </script>
 
     <!-- JavaScript Files -->
     <script src="${pageContext.request.contextPath}/js/app.min.js"></script>
 </head>
+
 <body class="authentication-bg position-relative">
 <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5 position-relative">
     <div class="container">
@@ -67,10 +88,23 @@
         <!-- end row -->
     </div>
 
-
     <!-- end container -->
 </div>
-
+<%-- Check if there is an error message and display it --%>
+<%
+    if (errorMessage != null) {
+%>
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: '<%= errorMessage %>',
+        confirmButtonText: 'OK'
+    });
+</script>
+<%
+    }
+%>
 <footer class="footer footer-alt fw-medium">
     <span class="text-dark">
         <script>
