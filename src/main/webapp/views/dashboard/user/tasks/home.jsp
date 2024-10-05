@@ -136,7 +136,7 @@
                                                         </td>
                                                         <td>
                                                             <!-- Update Button -->
-                                                            <a href="tasks?action=edit&id=<%= task.getId() %>" class="btn btn-sm btn-primary">Edit</a>
+                                                            <a href="tasks?action=statusUpdate&id=<%= task.getId() %>" class="btn btn-sm btn-primary">Edit</a>
 
                                                             <!-- Delete Button with form for POST method -->
                                                             <form action="tasks" method="POST" class="d-inline">
@@ -146,6 +146,8 @@
                                                             </form>
                                                         </td>
                                                     </tr>
+
+
                                                     <%
                                                         }
                                                     } else {
@@ -162,10 +164,35 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <!-- End Assigned Tasks Table -->
 
-                                <!-- Separator for visual clarity -->
-                                <hr class="my-4" /> <!-- Horizontal line for separation -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                <hr class="my-4" />
+
+
+
+
+
+
+
+
+
+
+
+
 
                                 <!-- Tasks Created by User Table -->
                                 <div id="created-tasks-table-collapse" class="collapse show">
