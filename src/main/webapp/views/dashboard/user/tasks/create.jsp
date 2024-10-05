@@ -80,6 +80,7 @@
 
                                             <input type="hidden" name="creator" value="<%= session.getAttribute("id") %>">
                                             <input type="hidden" name="assignedUser" value="<%= session.getAttribute("id") %>">
+                                            <input type="hidden" name="status" value="NEW">
 
 
 

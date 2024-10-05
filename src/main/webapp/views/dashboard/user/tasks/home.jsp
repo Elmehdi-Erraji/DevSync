@@ -161,8 +161,6 @@
                                                         <th>Description</th>
                                                         <th>Due Date</th>
                                                         <th>Status</th>
-                                                        <th>Creator</th>
-                                                        <th>Assigned User</th>
                                                         <th>Tags</th>
                                                         <th>Actions</th>
                                                     </tr>
@@ -179,8 +177,7 @@
                                                         <td><%= task.getDescription() %></td>
                                                         <td><%= task.getDueDate() %></td>
                                                         <td><%= task.getStatus() %></td>
-                                                        <td><%= task.getCreator().getUsername() %></td>
-                                                        <td><%= task.getAssignedUser().getUsername() %></td>
+
                                                         <td>
                                                             <%
                                                                 if (task.getTags() != null && !task.getTags().isEmpty()) {
