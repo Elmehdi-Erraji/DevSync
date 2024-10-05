@@ -34,6 +34,8 @@ public class loginServlet extends HttpServlet {
 
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
+            session.setAttribute("id", user.getId());
+            session.setAttribute("username", user.getUsername());
             session.setAttribute("role", user.getRole().toString());
 
             if (user.getRole() == Role.MANAGER) {

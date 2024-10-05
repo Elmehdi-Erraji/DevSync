@@ -1,3 +1,4 @@
+
 <!-- ========== Topbar Start ========== -->
 <div class="navbar-custom">
     <div class="topbar container-fluid">
@@ -48,9 +49,11 @@
                                     <img src="${pageContext.request.contextPath}//images/users/avatar-1.jpg" alt="user-image" width="32" class="rounded-circle">
                                 </span>
                     <span class="d-lg-block d-none">
-                                    <h5 class="my-0 fw-normal">Thomson <i
-                                            class="ri-arrow-down-s-line d-none d-sm-inline-block align-middle"></i></h5>
-                                </span>
+    <h5 class="my-0 fw-normal">
+        <%= session.getAttribute("username") != null ? session.getAttribute("username") : "Guest" %>
+        <i class="ri-arrow-down-s-line d-none d-sm-inline-block align-middle"></i>
+    </h5>
+</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
                     <!-- item-->

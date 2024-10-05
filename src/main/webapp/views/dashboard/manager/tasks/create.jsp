@@ -1,3 +1,5 @@
+<%@include file="../partials/sessionCheck.jsp"%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
 <%@ page import="domain.Task" %>
@@ -32,7 +34,6 @@
 
     <div class="content-page">
         <div class="content">
-
             <!-- Start Content-->
             <div class="container-fluid">
                 <!-- start page title -->
@@ -77,14 +78,20 @@
                                                 <input type="date" id="dueDate" class="form-control" name="dueDate" required>
                                             </div>
 
+                                            <input type="hidden" name="creator" value="<%= session.getAttribute("id") %>">
+
                                             <div class="mb-3">
-                                                <label for="creator" class="form-label">Creator</label>
-                                                <select class="form-select" id="creator" name="creator" required>
+                                                <label for="assignedUser" class="form-label">Assigned User</label>
+                                                <select class="form-select" id="assignedUser" name="assignedUser" required>
                                                     <%
+                                                        // Get the list of users from the request attribute
                                                         List<User> userList = (List<User>) request.getAttribute("users");
+
+                                                        // Check if the list is not null and contains users
                                                         if (userList != null && !userList.isEmpty()) {
+                                                            // Loop through the users and only display those with the role 'USER'
                                                             for (User user : userList) {
-                                                                if (user.getRole() == Role.USER) { // Check for USER role
+                                                                if (user.getRole() == Role.USER) {
                                                     %>
                                                     <option value="<%= user.getId() %>"><%= user.getUsername() %></option>
                                                     <%
@@ -95,20 +102,6 @@
                                                 </select>
                                             </div>
 
-                                            <div class="mb-3">
-                                                <label for="assignedUser" class="form-label">Assigned User</label>
-                                                <select class="form-select" id="assignedUser" name="assignedUser" required>
-                                                    <%
-                                                        if (userList != null && !userList.isEmpty()) {
-                                                            for (User user : userList) {
-                                                    %>
-                                                    <option value="<%= user.getId() %>"><%= user.getUsername() %></option>
-                                                    <%
-                                                            }
-                                                        }
-                                                    %>
-                                                </select>
-                                            </div>
 
                                             <div class="mb-3">
                                                 <label for="tags" class="form-label">Tags</label>

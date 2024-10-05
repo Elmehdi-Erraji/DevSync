@@ -1,3 +1,5 @@
+<%@include file="../partials/sessionCheck.jsp"%>
+
 <!DOCTYPE html>
 <html lang="en">
 <%@ include file="../partials/head.jsp" %>
