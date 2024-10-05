@@ -62,7 +62,7 @@
                                 <div class="row">
                                     <div class="col-lg-6">
 
-                                        <form action="${pageContext.request.contextPath}/manager/tasks" method="POST" id="addTaskForm">
+                                        <form action="${pageContext.request.contextPath}/user/tasks" method="POST" id="addTaskForm">
                                             <div class="mb-3">
                                                 <label for="title" class="form-label">Task Title</label>
                                                 <input type="text" id="title" class="form-control" name="title" placeholder="Enter task title" required>
@@ -79,25 +79,8 @@
                                             </div>
 
                                             <input type="hidden" name="creator" value="<%= session.getAttribute("id") %>">
+                                            <input type="hidden" name="assignedUser" value="<%= session.getAttribute("id") %>">
 
-                                            <div class="mb-3">
-                                                <label for="assignedUser" class="form-label">Assigned User</label>
-                                                <select class="form-select" id="assignedUser" name="assignedUser" required>
-                                                    <%
-                                                        List<User> userList = (List<User>) request.getAttribute("users");
-
-                                                        if (userList != null && !userList.isEmpty()) {
-                                                            for (User user : userList) {
-                                                                if (user.getRole() == Role.USER) {
-                                                    %>
-                                                    <option value="<%= user.getId() %>"><%= user.getUsername() %></option>
-                                                    <%
-                                                                }
-                                                            }
-                                                        }
-                                                    %>
-                                                </select>
-                                            </div>
 
 
                                             <div class="mb-3">

@@ -54,8 +54,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-body p-0
-">
+                            <div class="card-body p-0">
                                 <div class="p-3">
                                     <div class="row">
                                         <div class="col-lg-6">
@@ -63,84 +62,175 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Tasks Table -->
+
+                                <!-- Tasks Assigned to User Table -->
                                 <div id="tasks-table-collapse" class="collapse show">
-                                    <div class="table-responsive">
-                                        <table class="table table-nowrap table-hover mb-0">
-                                            <thead>
-                                            <tr>
-                                                <th>Task ID</th>
-                                                <th>Title</th>
-                                                <th>Description</th>
-                                                <th>Due Date</th>
-                                                <th>Status</th>
-                                                <th>Creator</th>
-                                                <th>Assigned User</th>
-                                                <th>Tags</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <%
-                                                List<Task> taskList = (List<Task>) request.getAttribute("tasks");
-                                                if (taskList != null && !taskList.isEmpty()) {
-                                                    for (Task task : taskList) {
-                                            %>
-                                            <tr>
-                                                <td><%= task.getId() %></td>
-                                                <td><%= task.getTitle() %></td>
-                                                <td><%= task.getDescription() %></td>
-                                                <td><%= task.getDueDate() %></td>
-                                                <td><%= task.getStatus() %></td>
-                                                <td><%= task.getCreator().getUsername() %></td>
-                                                <td><%= task.getAssignedUser().getUsername() %></td>
-                                                <td>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h4 class="text-center mt-4">Tasks Assigned to You</h4> <!-- Centered Heading for Assigned Tasks -->
+                                            <hr style="border-top: 2px solid black; width: 50%; margin: 10px auto;" /> <!-- Black line for separation -->
+                                            <div class="table-responsive">
+                                                <table class="table table-nowrap table-hover mb-0">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Task ID</th>
+                                                        <th>Title</th>
+                                                        <th>Description</th>
+                                                        <th>Due Date</th>
+                                                        <th>Status</th>
+                                                        <th>Creator</th>
+                                                        <th>Assigned User</th>
+                                                        <th>Tags</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
                                                     <%
-                                                        if (task.getTags() != null && !task.getTags().isEmpty()) {
-                                                            for (Tag tag : task.getTags()) {
+                                                        List<Task> assignedTaskList = (List<Task>) request.getAttribute("assignedTasks");
+                                                        if (assignedTaskList != null && !assignedTaskList.isEmpty()) {
+                                                            for (Task task : assignedTaskList) {
                                                     %>
-                                                    <span class="badge bg-info"><%= tag.getName() %></span>
+                                                    <tr>
+                                                        <td><%= task.getId() %></td>
+                                                        <td><%= task.getTitle() %></td>
+                                                        <td><%= task.getDescription() %></td>
+                                                        <td><%= task.getDueDate() %></td>
+                                                        <td><%= task.getStatus() %></td>
+                                                        <td><%= task.getCreator().getUsername() %></td>
+                                                        <td><%= task.getAssignedUser().getUsername() %></td>
+                                                        <td>
+                                                            <%
+                                                                if (task.getTags() != null && !task.getTags().isEmpty()) {
+                                                                    for (Tag tag : task.getTags()) {
+                                                            %>
+                                                            <span class="badge bg-info"><%= tag.getName() %></span>
+                                                            <%
+                                                                }
+                                                            } else {
+                                                            %>
+                                                            <span>No Tags</span>
+                                                            <%
+                                                                }
+                                                            %>
+                                                        </td>
+                                                        <td>
+                                                            <!-- Update Button -->
+                                                            <a href="tasks?action=edit&id=<%= task.getId() %>" class="btn btn-sm btn-primary">Edit</a>
+
+                                                            <!-- Delete Button with form for POST method -->
+                                                            <form action="tasks" method="POST" class="d-inline">
+                                                                <input type="hidden" name="id" value="<%= task.getId() %>"/>
+                                                                <input type="hidden" name="_method" value="delete"/>
+                                                                <button type="submit" class="btn btn-sm btn-danger delete-btn">Delete</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
                                                     <%
                                                         }
                                                     } else {
                                                     %>
-                                                    <span>No Tags</span>
+                                                    <tr>
+                                                        <td colspan="9" class="text-center">No tasks assigned to you</td>
+                                                    </tr>
                                                     <%
                                                         }
                                                     %>
-                                                </td>
-                                                <td>
-                                                    <!-- Update Button -->
-                                                    <a href="tasks?action=edit&id=<%= task.getId() %>" class="btn btn-sm btn-primary">Edit</a>
-
-                                                    <!-- Delete Button with form for POST method -->
-                                                    <form action="tasks" method="POST" class="d-inline">
-                                                        <input type="hidden" name="id" value="<%= task.getId() %>"/>
-                                                        <input type="hidden" name="_method" value="delete"/>
-                                                        <button type="submit" class="btn btn-sm btn-danger delete-btn">Delete</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                            <%
-                                                }
-                                            } else {
-                                            %>
-                                            <tr>
-                                                <td colspan="9" class="text-center">No tasks available</td>
-                                            </tr>
-                                            <%
-                                                }
-                                            %>
-                                            </tbody>
-                                        </table>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                <!-- End Assigned Tasks Table -->
 
-                                <!-- End Tasks Table -->
+                                <!-- Separator for visual clarity -->
+                                <hr class="my-4" /> <!-- Horizontal line for separation -->
+
+                                <!-- Tasks Created by User Table -->
+                                <div id="created-tasks-table-collapse" class="collapse show">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h4 class="text-center mt-4">Tasks Created by You</h4> <!-- Centered Heading for Created Tasks -->
+                                            <hr style="border-top: 2px solid black; width: 50%; margin: 10px auto;" /> <!-- Black line for separation -->
+                                            <div class="table-responsive">
+                                                <table class="table table-nowrap table-hover mb-0">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Task ID</th>
+                                                        <th>Title</th>
+                                                        <th>Description</th>
+                                                        <th>Due Date</th>
+                                                        <th>Status</th>
+                                                        <th>Creator</th>
+                                                        <th>Assigned User</th>
+                                                        <th>Tags</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <%
+                                                        List<Task> createdTaskList = (List<Task>) request.getAttribute("selfCreatedTasks");
+                                                        if (createdTaskList != null && !createdTaskList.isEmpty()) {
+                                                            for (Task task : createdTaskList) {
+                                                    %>
+                                                    <tr>
+                                                        <td><%= task.getId() %></td>
+                                                        <td><%= task.getTitle() %></td>
+                                                        <td><%= task.getDescription() %></td>
+                                                        <td><%= task.getDueDate() %></td>
+                                                        <td><%= task.getStatus() %></td>
+                                                        <td><%= task.getCreator().getUsername() %></td>
+                                                        <td><%= task.getAssignedUser().getUsername() %></td>
+                                                        <td>
+                                                            <%
+                                                                if (task.getTags() != null && !task.getTags().isEmpty()) {
+                                                                    for (Tag tag : task.getTags()) {
+                                                            %>
+                                                            <span class="badge bg-info"><%= tag.getName() %></span>
+                                                            <%
+                                                                }
+                                                            } else {
+                                                            %>
+                                                            <span>No Tags</span>
+                                                            <%
+                                                                }
+                                                            %>
+                                                        </td>
+                                                        <td>
+                                                            <!-- Update Button -->
+                                                            <a href="tasks?action=edit&id=<%= task.getId() %>" class="btn btn-sm btn-primary">Edit</a>
+
+                                                            <!-- Delete Button with form for POST method -->
+                                                            <form action="tasks" method="POST" class="d-inline">
+                                                                <input type="hidden" name="id" value="<%= task.getId() %>"/>
+                                                                <input type="hidden" name="_method" value="delete"/>
+                                                                <button type="submit" class="btn btn-sm btn-danger delete-btn">Delete</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    <%
+                                                        }
+                                                    } else {
+                                                    %>
+                                                    <tr>
+                                                        <td colspan="9" class="text-center">No tasks created by you</td>
+                                                    </tr>
+                                                    <%
+                                                        }
+                                                    %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Created Tasks Table -->
+
                             </div>
                         </div>
                     </div>
                 </div>
+
 
             </div> <!-- container -->
 
