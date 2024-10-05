@@ -69,4 +69,12 @@ public class TaskRepository {
             throw e;
         }
     }
+
+
+    public List<Task> findTasksByUserId(Long userId) {
+        TypedQuery<Task> query = entityManager.createQuery(
+                "SELECT t FROM Task t WHERE t.assignedUser.id = :userId", Task.class);
+        query.setParameter("userId", userId);
+        return query.getResultList();
+    }
 }

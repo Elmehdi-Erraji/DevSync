@@ -41,7 +41,7 @@ public class loginServlet extends HttpServlet {
             if (user.getRole() == Role.MANAGER) {
                 response.sendRedirect("manager/users");
             } else if (user.getRole() == Role.USER) {
-                response.sendRedirect("/views/dashboard/user/home.jsp");
+                response.sendRedirect("user/tasks");
             } else {
                 response.sendRedirect("error.jsp?message=Unknown+role");
             }
