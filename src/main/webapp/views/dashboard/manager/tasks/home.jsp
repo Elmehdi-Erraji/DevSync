@@ -5,6 +5,7 @@
 <%@ page import="domain.User" %>
 <%@ page import="domain.Task" %>
 <%@ page import="domain.Tag" %>
+<%@ page import="domain.enums.TaskStatus" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
@@ -92,7 +93,29 @@
                                                 <td><%= task.getTitle() %></td>
                                                 <td><%= task.getDescription() %></td>
                                                 <td><%= task.getDueDate() %></td>
-                                                <td><%= task.getStatus() %></td>
+                                                <td>
+                                                    <%
+                                                        TaskStatus status = task.getStatus();
+                                                        if (status == TaskStatus.NEW) {
+                                                    %>
+                                                    <span class="badge bg-info-subtle text-info">New</span>
+                                                    <%
+                                                    } else if (status == TaskStatus.IN_PROGRESS) {
+                                                    %>
+                                                    <span class="badge bg-warning-subtle text-warning">In Progress</span>
+                                                    <%
+                                                    } else if (status == TaskStatus.DONE) {
+                                                    %>
+                                                    <span class="badge bg-pink-subtle text-pink">Done</span>
+                                                    <%
+                                                    } else {
+                                                    %>
+                                                    <span class="badge bg-warning">Unknown Status</span>
+                                                    <%
+                                                        }
+                                                    %>
+                                                </td>
+
                                                 <td><%= task.getCreator().getUsername() %></td>
                                                 <td><%= task.getAssignedUser().getUsername() %></td>
                                                 <td>

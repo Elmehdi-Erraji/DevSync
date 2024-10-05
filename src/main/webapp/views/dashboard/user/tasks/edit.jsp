@@ -90,7 +90,6 @@
                                                 <label for="" class="form-label">Task Status</label>
                                                 <select id="" class="form-select" name="status" required>
                                                     <%
-                                                        // Assuming you have an enum or list of possible statuses
                                                         for (TaskStatus status : TaskStatus.values()) {
                                                             boolean selected = task.getStatus() == status;
                                                     %>

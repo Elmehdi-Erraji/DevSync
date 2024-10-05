@@ -4,6 +4,7 @@
 <%@ page import="domain.User" %>
 <%@ page import="domain.Task" %>
 <%@ page import="domain.Tag" %>
+<%@ page import="domain.enums.TaskStatus" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
@@ -78,8 +79,7 @@
                                                         <th>Description</th>
                                                         <th>Due Date</th>
                                                         <th>Status</th>
-                                                        <th>Creator</th>
-                                                        <th>Assigned User</th>
+                                                        <th>Assigned By</th>
                                                         <th>Tags</th>
                                                         <th>Actions</th>
                                                     </tr>
@@ -95,15 +95,36 @@
                                                         <td><%= task.getTitle() %></td>
                                                         <td><%= task.getDescription() %></td>
                                                         <td><%= task.getDueDate() %></td>
-                                                        <td><%= task.getStatus() %></td>
+                                                        <td>
+                                                            <%
+                                                                TaskStatus status = task.getStatus();
+                                                                if (status == TaskStatus.NEW) {
+                                                            %>
+                                                            <span class="badge bg-info-subtle text-info">New</span>
+                                                            <%
+                                                            } else if (status == TaskStatus.IN_PROGRESS) {
+                                                            %>
+                                                            <span class="badge bg-warning-subtle text-warning">In Progress</span>
+                                                            <%
+                                                            } else if (status == TaskStatus.DONE) {
+                                                            %>
+                                                            <span class="badge bg-pink-subtle text-pink">Done</span>
+                                                            <%
+                                                            } else {
+                                                            %>
+                                                            <span class="badge bg-warning">Unknown Status</span>
+                                                            <%
+                                                                }
+                                                            %>
+                                                        </td>
+
                                                         <td><%= task.getCreator().getUsername() %></td>
-                                                        <td><%= task.getAssignedUser().getUsername() %></td>
                                                         <td>
                                                             <%
                                                                 if (task.getTags() != null && !task.getTags().isEmpty()) {
                                                                     for (Tag tag : task.getTags()) {
                                                             %>
-                                                            <span class="badge bg-info"><%= tag.getName() %></span>
+                                                            <span class="badge bg-success text-white"><%= tag.getName() %></span>
                                                             <%
                                                                 }
                                                             } else {
@@ -176,14 +197,36 @@
                                                         <td><%= task.getTitle() %></td>
                                                         <td><%= task.getDescription() %></td>
                                                         <td><%= task.getDueDate() %></td>
-                                                        <td><%= task.getStatus() %></td>
+                                                        <td>
+                                                            <%
+                                                                TaskStatus status = task.getStatus();
+                                                                if (status == TaskStatus.NEW) {
+                                                            %>
+                                                            <span class="badge bg-info-subtle text-info">New</span>
+                                                            <%
+                                                            } else if (status == TaskStatus.IN_PROGRESS) {
+                                                            %>
+                                                            <span class="badge bg-warning-subtle text-warning">In Progress</span>
+                                                            <%
+                                                            } else if (status == TaskStatus.DONE) {
+                                                            %>
+                                                            <span class="badge bg-pink-subtle text-pink">Done</span>
+                                                            <%
+                                                            } else {
+                                                            %>
+                                                            <span class="badge bg-warning">Unknown Status</span>
+                                                            <%
+                                                                }
+                                                            %>
+                                                        </td>
+
 
                                                         <td>
                                                             <%
                                                                 if (task.getTags() != null && !task.getTags().isEmpty()) {
                                                                     for (Tag tag : task.getTags()) {
                                                             %>
-                                                            <span class="badge bg-info"><%= tag.getName() %></span>
+                                                            <span class="badge bg-success text-white"><%= tag.getName() %></span>
                                                             <%
                                                                 }
                                                             } else {
