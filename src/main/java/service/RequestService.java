@@ -8,6 +8,7 @@ import domain.enums.RequestStatus;
 import repository.RequestRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public class RequestService {
@@ -42,5 +43,9 @@ public class RequestService {
     // Retrieve a request by ID
     public Optional<Request> getRequestById(Long id) {
         return requestRepository.findById(id);
+    }
+
+    public List<Request> getAllRequests() {
+        return requestRepository.findAll();
     }
 }

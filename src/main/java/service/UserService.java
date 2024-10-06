@@ -42,4 +42,8 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    public void updateUserTokens(Long userId, int dailyTokens, int monthlyTokens) {
+        userRepository.updateTokens(userId, dailyTokens, monthlyTokens);
+    }
 }

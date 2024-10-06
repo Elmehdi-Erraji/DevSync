@@ -1,10 +1,12 @@
 package repository;
 
 import domain.Request;
+import domain.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 
+import java.util.List;
 import java.util.Optional;
 
 public class RequestRepository {
@@ -58,4 +60,10 @@ public class RequestRepository {
             throw e;
         }
     }
+
+    public List<Request> findAll() {
+        TypedQuery<Request> query = entityManager.createQuery("SELECT r FROM Request r", Request.class);
+        return query.getResultList();
+    }
+
 }

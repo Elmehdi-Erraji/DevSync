@@ -14,62 +14,28 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
-@WebServlet("/request")
+@WebServlet("/manager/request")
 public class RequestServlet extends HttpServlet {
 
     private RequestService requestService;
-    private TaskService taskService;
-    private UserService userService;
 
     @Override
     public void init() throws ServletException {
         try {
             requestService = new RequestService();
-            taskService = new TaskService();
-            userService = new UserService();
+
         } catch (Exception e) {
             throw new ServletException("Failed to initialize RequestServlet", e);
         }
     }
 
-
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Long taskId = Long.parseLong(request.getParameter("taskId"));
-        Long userId = Long.parseLong(request.getParameter("user_id"));
-        String requestType = request.getParameter("requestType"); // Get request type
-
-        // Retrieve task and user
-        Task task = taskService.findTaskById(taskId);
-        User user = userService.findUserById(userId);
-
-        // Check if task is null
-        if (task == null) {
-            throw new ServletException("Task not found with id: " + taskId);
-        }
-
-        // Check if user is null
-        if (user == null) {
-            throw new ServletException("User not found with id: " + userId);
-        }
-
-        // Create a new request based on the requestType
-        Request requestToSave = new Request();
-        requestToSave.setTask(task);
-        requestToSave.setUser(user);
-
-        // Set the request type based on the value received
-        if ("REJECT".equalsIgnoreCase(requestType)) {
-            requestToSave.setRequestType(RequestType.REJECT);
-        } else if ("DELETE".equalsIgnoreCase(requestType)) {
-            requestToSave.setRequestType(RequestType.DELETE);
-        }
-
-        requestService.saveRequest(requestToSave);
-
-        // Redirect or forward to a success page
-        response.sendRedirect("successPage.jsp");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Request> requestList = requestService.getAllRequests(); // Assuming you have this method implemented
+        request.setAttribute("requests", requestList);
+        request.getRequestDispatcher("/views/dashboard/manager/requests/home.jsp").forward(request, response);
     }
 
 }

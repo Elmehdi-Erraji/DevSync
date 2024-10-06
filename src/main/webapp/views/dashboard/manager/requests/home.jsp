@@ -3,6 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
 <%@ page import="domain.Tag" %>
+<%@ page import="domain.Request" %>
+<%@ page import="domain.enums.RequestStatus" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
@@ -76,34 +78,67 @@
                                     </div>
                                 </div>
 
-                                <div id="yearly-sales-collapse" class="collapse show">
+                                <div id="requests-table-collapse" class="collapse show">
                                     <div class="table-responsive">
                                         <table class="table table-nowrap table-hover mb-0">
                                             <thead>
                                             <tr>
-                                                <th>ID</th>
-                                                <th>Tag name</th>
+                                                <th>Request ID</th>
+                                                <th>Task ID</th>
+                                                <th>User ID</th>
+                                                <th>Request Type</th>
+                                                <th>Status</th>
+                                                <th>Request Date</th>
                                                 <th>Actions</th>
-
                                             </tr>
                                             </thead>
-                                            <tbody id="tableBody">
+                                            <tbody>
                                             <%
-                                                List<Tag> tagList = (List<Tag>) request.getAttribute("tags");
-                                                if (tagList != null && !tagList.isEmpty()) {
-                                                    for (Tag tag : tagList) {
+                                                List<Request> reqList = (List<Request>) request.getAttribute("requests");
+                                                if (reqList != null && !reqList.isEmpty()) {
+                                                    for (Request req : reqList) {
                                             %>
                                             <tr>
-                                                <td><%= tag.getId() %></td>
-                                                <td><%= tag.getName()%></td>
-
+                                                <td><%= req.getId() %></td>
+                                                <td><%= req.getTask().getId() %></td>
+                                                <td><%= req.getUser().getUsername()%></td>
+                                                <td><%= req.getRequestType() %></td>
                                                 <td>
-                                                    <a href="tags?action=edit&id=<%= tag.getId() %>" class="btn btn-sm btn-primary">Edit</a>
+                                                    <%
+                                                        RequestStatus status = req.getStatus();
+                                                        if (status == RequestStatus.PENDING) {
+                                                    %>
+                                                    <span class="badge bg-info-subtle text-info">Pending</span>
+                                                    <%
+                                                    } else if (status == RequestStatus.APPROVED) {
+                                                    %>
+                                                    <span class="badge bg-success-subtle text-success">Approved</span>
+                                                    <%
+                                                    } else if (status == RequestStatus.REJECTED) {
+                                                    %>
+                                                    <span class="badge bg-danger-subtle text-danger">Rejected</span>
+                                                    <%
+                                                    } else {
+                                                    %>
+                                                    <span class="badge bg-warning">Unknown Status</span>
+                                                    <%
+                                                        }
+                                                    %>
+                                                </td>
+                                                <td><%= req.getRequestDate() %></td>
+                                                <td>
+                                                    <!-- Accept Button -->
+                                                    <form action="${pageContext.request.contextPath}/request" method="POST" class="d-inline">
+                                                        <input type="hidden" name="requestId" value="<%= req.getId() %>"/>
+                                                        <input type="hidden" name="requestType" value="ACCEPT"> <!-- Accept type -->
+                                                        <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                                    </form>
 
-                                                    <form action="tags" method="POST" class="d-inline">
-                                                        <input type="hidden" name="id" value="<%= tag.getId() %>"/>
-                                                        <input type="hidden" name="_method" value="delete"/>
-                                                        <button type="submit" class="btn btn-sm btn-danger delete-btn">Delete</button>
+                                                    <!-- Delete Button -->
+                                                    <form action="${pageContext.request.contextPath}/request" method="POST" class="d-inline">
+                                                        <input type="hidden" name="requestId" value="<%= req.getId() %>"/>
+                                                        <input type="hidden" name="requestType" value="DELETE"> <!-- Delete type -->
+                                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                                     </form>
                                                 </td>
                                             </tr>
@@ -112,18 +147,17 @@
                                             } else {
                                             %>
                                             <tr>
-                                                <td colspan="5" class="text-center">No tags found.</td>
+                                                <td colspan="7" class="text-center">No requests available</td>
                                             </tr>
                                             <%
                                                 }
                                             %>
                                             </tbody>
                                         </table>
-
-
-
                                     </div>
                                 </div>
+
+
 
                             </div>
                         </div>

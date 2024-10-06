@@ -5,6 +5,8 @@
       <map>
         <entry key="file://$PROJECT_DIR$/src/main/webapp/views/auth/login.jsp" value="file://$PROJECT_DIR$/src/main/webapp/views/auth" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/views/dashboard/manager/partials/sessionCheck.jsp" value="file://$PROJECT_DIR$/src/main/webapp/views/dashboard/manager/partials" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/views/dashboard/manager/requests/home.jsp" value="file://$PROJECT_DIR$/src/main/webapp/views/dashboard/manager/requests" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/views/dashboard/manager/tasks/home.jsp" value="file://$PROJECT_DIR$/src/main/webapp/views/dashboard/manager/tasks" />
       </map>
     </option>
   </component>

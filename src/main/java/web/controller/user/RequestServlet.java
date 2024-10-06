@@ -59,13 +59,38 @@ public class RequestServlet extends HttpServlet {
 
         if ("REJECT".equalsIgnoreCase(requestType)) {
             requestToSave.setRequestType(RequestType.REJECT);
+
+            Integer dailyTokens = (Integer) request.getSession().getAttribute("dailyTokens");
+            if (dailyTokens != null && dailyTokens > 0) {
+                requestService.saveRequest(requestToSave);
+
+                request.getSession().setAttribute("dailyTokens", dailyTokens - 1);
+                userService.updateUserTokens(userId, dailyTokens - 1, user.getMonthlyTokens()); // Update in DB
+            } else {
+                // Handle insufficient tokens
+                request.setAttribute("errorMessage", "Insufficient daily tokens to reject the request.");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+                return;
+            }
         } else if ("DELETE".equalsIgnoreCase(requestType)) {
             requestToSave.setRequestType(RequestType.DELETE);
+
+            Integer monthlyTokens = (Integer) request.getSession().getAttribute("monthlyTokens");
+            if (monthlyTokens > 0) {
+                requestService.saveRequest(requestToSave); // Save request
+
+                // Update the session and database tokens
+                request.getSession().setAttribute("monthlyTokens", monthlyTokens - 1);
+                userService.updateUserTokens(userId, user.getDailyTokens(), monthlyTokens - 1); // Update in DB
+            } else {
+                // Handle insufficient tokens
+                request.setAttribute("errorMessage", "Insufficient monthly tokens to delete the request.");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+                return;
+            }
         }
 
-        requestService.saveRequest(requestToSave);
-
-        response.sendRedirect("successPage.jsp");
+        response.sendRedirect("/demo2/user/tasks");
     }
 
 }
