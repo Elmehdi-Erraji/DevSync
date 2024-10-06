@@ -38,6 +38,7 @@ public class TaskServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
 
+        // Check if user is logged in
         if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -46,14 +47,15 @@ public class TaskServlet extends HttpServlet {
         User loggedInUser = (User) session.getAttribute("user");
         String action = request.getParameter("action");
 
+        // Handle different actions
         if (action == null) {
+            // Display assigned and self-created tasks
             List<Task> assignedTasks = taskService.findTasksAssignedToUser((long) loggedInUser.getId());
             List<Task> selfCreatedTasks = taskService.findTasksCreatedByUser((long) loggedInUser.getId());
 
             request.setAttribute("assignedTasks", assignedTasks);
             request.setAttribute("selfCreatedTasks", selfCreatedTasks);
             request.getRequestDispatcher("/views/dashboard/user/tasks/home.jsp").forward(request, response);
-
         } else if (action.equals("edit")) {
             Long id = Long.parseLong(request.getParameter("id"));
             Task task = taskService.findTaskById(id);
@@ -61,18 +63,13 @@ public class TaskServlet extends HttpServlet {
 
             List<Tag> tags = tagService.findAllTags();
             request.setAttribute("tags", tags);
-
             request.getRequestDispatcher("/views/dashboard/user/tasks/edit.jsp").forward(request, response);
-
-        }
-        else if (action.equals("statusUpdate")) {
+        } else if (action.equals("statusUpdate")) {
             Long id = Long.parseLong(request.getParameter("id"));
             Task task = taskService.findTaskById(id);
             request.setAttribute("task", task);
-
             request.getRequestDispatcher("/views/dashboard/user/tasks/statusUpdate.jsp").forward(request, response);
-
-        }else if (action.equals("create")) {
+        } else if (action.equals("create")) {
             List<Tag> tags = tagService.findAllTags();
             request.setAttribute("tags", tags);
             request.getRequestDispatcher("/views/dashboard/user/tasks/create.jsp").forward(request, response);
@@ -85,66 +82,73 @@ public class TaskServlet extends HttpServlet {
         String id = request.getParameter("id");
 
         if ("delete".equalsIgnoreCase(method)) {
+            // Handle task deletion
             if (id != null && !id.isEmpty()) {
                 taskService.deleteTask(Long.parseLong(id));
             }
         } else if ("statusUpdate".equalsIgnoreCase(method)) {
-            // Handle status update only
+            // Handle status update
             if (id != null && !id.isEmpty()) {
                 Task task = taskService.findTaskById(Long.parseLong(id));
                 String statusParam = request.getParameter("status");
                 if (statusParam != null && !statusParam.isEmpty()) {
                     TaskStatus status = TaskStatus.valueOf(statusParam.toUpperCase());
                     task.setStatus(status);
-                    taskService.updateTask(task); // Update only the status
+                    taskService.updateTask(task);
                 }
             }
         } else {
-            // Handle full update operations
+            // Handle task creation or update
             if (id != null && !id.isEmpty()) {
+                // Update existing task
                 Long taskId = Long.parseLong(id);
                 Task task = taskService.findTaskById(taskId);
 
-                // Updating all attributes
-                String title = request.getParameter("title");
-                String description = request.getParameter("description");
-                String dueDate = request.getParameter("dueDate");
-                String statusParam = request.getParameter("status");
-                Long creatorId = Long.parseLong(request.getParameter("creator"));
-                Long assignedUserId = Long.parseLong(request.getParameter("assignedUser"));
-                String[] tagIds = request.getParameterValues("tags");
-
-                // Update task attributes
-                task.setTitle(title);
-                task.setDescription(description);
-                task.setDueDate(dueDate);
-
-                // Set the status if provided
-                if (statusParam != null) {
-                    TaskStatus status = TaskStatus.valueOf(statusParam.toUpperCase());
-                    task.setStatus(status);
-                }
-
-                // Set the creator and assigned user
-                User creator = userService.findUserById(creatorId);
-                User assignedUser = userService.findUserById(assignedUserId);
-                task.setCreator(creator);
-                task.setAssignedUser(assignedUser);
-
-                // Set tags
-                if (tagIds != null) {
-                    task.getTags().clear(); // Clear existing tags before adding new ones
-                    for (String tagId : tagIds) {
-                        Tag tag = tagService.findTagById(Long.parseLong(tagId));
-                        task.getTags().add(tag);
-                    }
-                }
-
-                // Update the task in the database
+                updateTaskFromRequest(task, request);
                 taskService.updateTask(task);
+            } else {
+                // Create new task
+                Task newTask = new Task();
+                updateTaskFromRequest(newTask, request);
+                newTask.setStatus(TaskStatus.NEW); // Default status for new tasks
+                taskService.insertTask(newTask); // Save new task
             }
         }
 
-        response.sendRedirect("tasks?status=success"); // Redirect after processing
+        response.sendRedirect("tasks?status=success");
     }
+
+    private void updateTaskFromRequest(Task task, HttpServletRequest request) {
+        String title = request.getParameter("title");
+        String description = request.getParameter("description");
+        String dueDate = request.getParameter("dueDate");
+        Long creatorId = Long.parseLong(request.getParameter("creator"));
+        Long assignedUserId = Long.parseLong(request.getParameter("assignedUser"));
+        String statusParam = request.getParameter("status"); // Get the status from the request
+        String[] tagIds = request.getParameterValues("tags");
+
+        task.setTitle(title);
+        task.setDescription(description);
+        task.setDueDate(dueDate);
+
+        // Set the status if provided
+        if (statusParam != null && !statusParam.isEmpty()) {
+            TaskStatus status = TaskStatus.valueOf(statusParam.toUpperCase()); // Convert to enum
+            task.setStatus(status);
+        }
+
+        User creator = userService.findUserById(creatorId);
+        User assignedUser = userService.findUserById(assignedUserId);
+        task.setCreator(creator);
+        task.setAssignedUser(assignedUser);
+
+        if (tagIds != null) {
+            task.getTags().clear();
+            for (String tagId : tagIds) {
+                Tag tag = tagService.findTagById(Long.parseLong(tagId));
+                task.getTags().add(tag);
+            }
+        }
+    }
+
 }

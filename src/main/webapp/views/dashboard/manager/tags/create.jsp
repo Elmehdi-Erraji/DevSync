@@ -3,7 +3,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <%@ include file="../partials/head.jsp" %>
-<%@include file="../partials/sessionCheck.jsp"%>
 <body>
 <div class="wrapper">
 

@@ -21,7 +21,9 @@ public class Task {
     private String dueDate;
 
     @Enumerated(EnumType.STRING)
-    private TaskStatus status; // NEW, IN_PROGRESS, DONE
+    private TaskStatus status;// NEW, IN_PROGRESS, DONE
+
+    private boolean isRefused = false;
 
     // Relationships
     @ManyToOne

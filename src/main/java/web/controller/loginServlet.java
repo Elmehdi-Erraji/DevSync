@@ -30,25 +30,34 @@ public class loginServlet extends HttpServlet {
 
         User user = userService.findByEmail(email);
 
-        if (user != null && PasswordUtils.hashPassword(password).equals(user.getPassword())) {
+        if (user != null) {
+            String hashedInputPassword = PasswordUtils.hashPassword(password);
 
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            session.setAttribute("id", user.getId());
-            session.setAttribute("username", user.getUsername());
-            session.setAttribute("role", user.getRole().toString());
+            // Print for debugging
+            System.out.println("Raw Password: " + password);
+            System.out.println("Hashed Input Password: " + hashedInputPassword);
+            System.out.println("Stored Password: " + user.getPassword());
 
-            if (user.getRole() == Role.MANAGER) {
-                response.sendRedirect("manager/users");
-            } else if (user.getRole() == Role.USER) {
-                response.sendRedirect("user/tasks");
+            if (hashedInputPassword.equals(user.getPassword())) {
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
+                session.setAttribute("id", user.getId());
+                session.setAttribute("username", user.getUsername());
+                session.setAttribute("role", user.getRole().toString());
+
+                if (user.getRole() == Role.MANAGER) {
+                    response.sendRedirect("manager/users");
+                } else if (user.getRole() == Role.USER) {
+                    response.sendRedirect("user/tasks");
+                } else {
+                    response.sendRedirect("error.jsp?message=Unknown+role");
+                }
             } else {
-                response.sendRedirect("error.jsp?message=Unknown+role");
+                response.sendRedirect("login?error=Invalid+email+or+password");
             }
-
         } else {
-            response.sendRedirect("login.jsp?error=Invalid+email+or+password");
+            response.sendRedirect("login?error=Invalid+email+or+password");
         }
     }
-}
 
+}
