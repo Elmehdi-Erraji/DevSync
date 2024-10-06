@@ -1,12 +1,10 @@
-package web.controller.user;
+package web.controller.manager;
 
 import domain.Request;
 import domain.Task;
 import domain.User;
-import domain.enums.RequestStatus;
 import domain.enums.RequestType;
 import service.RequestService;
-import service.TagService;
 import service.TaskService;
 import service.UserService;
 
@@ -27,9 +25,9 @@ public class RequestServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         try {
-            requestService = new RequestService(); // Inject your request service
-            taskService = new TaskService();       // Inject your task service
-            userService = new UserService();       // Inject your user service
+            requestService = new RequestService();
+            taskService = new TaskService();
+            userService = new UserService();
         } catch (Exception e) {
             throw new ServletException("Failed to initialize RequestServlet", e);
         }
@@ -42,21 +40,26 @@ public class RequestServlet extends HttpServlet {
         Long userId = Long.parseLong(request.getParameter("user_id"));
         String requestType = request.getParameter("requestType"); // Get request type
 
+        // Retrieve task and user
         Task task = taskService.findTaskById(taskId);
         User user = userService.findUserById(userId);
 
+        // Check if task is null
         if (task == null) {
             throw new ServletException("Task not found with id: " + taskId);
         }
 
+        // Check if user is null
         if (user == null) {
             throw new ServletException("User not found with id: " + userId);
         }
 
+        // Create a new request based on the requestType
         Request requestToSave = new Request();
         requestToSave.setTask(task);
         requestToSave.setUser(user);
 
+        // Set the request type based on the value received
         if ("REJECT".equalsIgnoreCase(requestType)) {
             requestToSave.setRequestType(RequestType.REJECT);
         } else if ("DELETE".equalsIgnoreCase(requestType)) {
@@ -65,6 +68,7 @@ public class RequestServlet extends HttpServlet {
 
         requestService.saveRequest(requestToSave);
 
+        // Redirect or forward to a success page
         response.sendRedirect("successPage.jsp");
     }
 

@@ -139,20 +139,35 @@
                                                             <!-- Edit Button -->
                                                             <a href="tasks?action=statusUpdate&id=<%= task.getId() %>" class="btn btn-sm btn-primary">Edit</a>
 
-                                                            <!-- Reject Button -->
+                                                            <%
+                                                                Integer dailyTokens = (Integer) session.getAttribute("dailyTokens");
+                                                                if (dailyTokens > 0) {
+                                                            %>
                                                             <form action="${pageContext.request.contextPath}/request" method="POST" class="d-inline">
                                                                 <input type="hidden" name="taskId" value="<%= task.getId() %>"/>
-                                                                <input type="hidden" name="user_id" value="<%= session.getAttribute("id")%>" >
+                                                                <input type="hidden" name="user_id" value="<%= session.getAttribute("id") %>" >
+                                                                <input type="hidden" name="requestType" value="REJECT">
                                                                 <button type="submit" class="btn btn-sm btn-secondary">Reject</button>
                                                             </form>
+                                                            <%
+                                                                }
+                                                            %>
 
-
-                                                            <!-- Delete Button with form for POST method -->
-                                                            <form action="tasks" method="POST" class="d-inline">
-                                                                <input type="hidden" name="id" value="<%= task.getId() %>"/>
-                                                                <input type="hidden" name="_method" value="delete"/>
-                                                                <button type="submit" class="btn btn-sm btn-danger delete-btn">Delete</button>
+                                                            <%-- Delete Button --%>
+                                                            <%
+                                                                Integer monthlyTokens = (Integer) session.getAttribute("monthlyTokens");
+                                                                if (monthlyTokens > 0) {
+                                                            %>
+                                                            <form action="${pageContext.request.contextPath}/request" method="POST" class="d-inline">
+                                                                <input type="hidden" name="taskId" value="<%= task.getId() %>"/>
+                                                                <input type="hidden" name="user_id" value="<%= session.getAttribute("id") %>" >
+                                                                <input type="hidden" name="requestType" value="DELETE">
+                                                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                                             </form>
+                                                            <%
+                                                                }
+                                                            %>
+
                                                         </td>
                                                     </tr>
 
