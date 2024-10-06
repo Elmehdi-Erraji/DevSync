@@ -48,4 +48,13 @@ public class RequestService {
     public List<Request> getAllRequests() {
         return requestRepository.findAll();
     }
+
+
+    public void deleteRequest(Long id) {
+        try {
+            requestRepository.delete(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while deleting the request: " + e.getMessage(), e);
+        }
+    }
 }

@@ -58,7 +58,7 @@
                                 <div class="float-end">
                                     <i class="ri-group-2-line widget-icon"></i>
                                 </div>
-                                <h6 class="text-uppercase mt-0" title="Users">Tags</h6>
+                                <h6 class="text-uppercase mt-0" title="Users">Requests</h6>
                                 <h2 class="my-2">5</h2>
                             </div>
                         </div>
@@ -71,11 +71,7 @@
                         <div class="card">
                             <div class="card-body p-0">
                                 <div class="p-3">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <a href="tags?action=create" class="btn btn-primary" id="addButton">Add A Tag</a>
-                                        </div>
-                                    </div>
+
                                 </div>
 
                                 <div id="requests-table-collapse" class="collapse show">
@@ -130,14 +126,14 @@
                                                     <!-- Accept Button -->
                                                     <form action="${pageContext.request.contextPath}/request" method="POST" class="d-inline">
                                                         <input type="hidden" name="requestId" value="<%= req.getId() %>"/>
-                                                        <input type="hidden" name="requestType" value="ACCEPT"> <!-- Accept type -->
+                                                        <input type="hidden" name="action" value="ACCEPT"> <!-- Accept type -->
                                                         <button type="submit" class="btn btn-sm btn-success">Accept</button>
                                                     </form>
 
                                                     <!-- Delete Button -->
-                                                    <form action="${pageContext.request.contextPath}/request" method="POST" class="d-inline">
+                                                    <form action="${pageContext.request.contextPath}/manager/request" method="POST" class="d-inline">
                                                         <input type="hidden" name="requestId" value="<%= req.getId() %>"/>
-                                                        <input type="hidden" name="requestType" value="DELETE"> <!-- Delete type -->
+                                                        <input type="hidden" name="action" value="DELETE"> <!-- Delete type -->
                                                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                                     </form>
                                                 </td>

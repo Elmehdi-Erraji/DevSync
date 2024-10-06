@@ -57,10 +57,9 @@ public class RequestRepository {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
-            throw e;
+            throw new RuntimeException("Error while deleting the request: " + e.getMessage(), e);
         }
     }
-
     public List<Request> findAll() {
         TypedQuery<Request> query = entityManager.createQuery("SELECT r FROM Request r", Request.class);
         return query.getResultList();
