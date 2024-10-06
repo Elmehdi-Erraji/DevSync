@@ -71,6 +71,7 @@
                                             <h4 class="text-center mt-4">Tasks Assigned to You</h4> <!-- Centered Heading for Assigned Tasks -->
                                             <hr style="border-top: 2px solid black; width: 50%; margin: 10px auto;" /> <!-- Black line for separation -->
                                             <div class="table-responsive">
+
                                                 <table class="table table-nowrap table-hover mb-0">
                                                     <thead>
                                                     <tr>
@@ -135,8 +136,16 @@
                                                             %>
                                                         </td>
                                                         <td>
-                                                            <!-- Update Button -->
+                                                            <!-- Edit Button -->
                                                             <a href="tasks?action=statusUpdate&id=<%= task.getId() %>" class="btn btn-sm btn-primary">Edit</a>
+
+                                                            <!-- Reject Button -->
+                                                            <form action="${pageContext.request.contextPath}/request" method="POST" class="d-inline">
+                                                                <input type="hidden" name="taskId" value="<%= task.getId() %>"/>
+                                                                <input type="hidden" name="user_id" value="<%= session.getAttribute("id")%>" >
+                                                                <button type="submit" class="btn btn-sm btn-secondary">Reject</button>
+                                                            </form>
+
 
                                                             <!-- Delete Button with form for POST method -->
                                                             <form action="tasks" method="POST" class="d-inline">
@@ -160,6 +169,7 @@
                                                     %>
                                                     </tbody>
                                                 </table>
+
                                             </div>
                                         </div>
                                     </div>
