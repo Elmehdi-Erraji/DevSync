@@ -10,8 +10,6 @@
     }
 
     String userRole = (String) currentSession.getAttribute("role");
-    String username = (String) currentSession.getAttribute("username");
-
     if (!"USER".equals(userRole)) {
         currentSession.setAttribute("errorMessage", "You are not authorized to access that page.");
         response.sendRedirect(request.getContextPath() + "/login");

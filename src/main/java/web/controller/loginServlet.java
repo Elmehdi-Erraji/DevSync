@@ -44,6 +44,8 @@ public class loginServlet extends HttpServlet {
                 session.setAttribute("id", user.getId());
                 session.setAttribute("username", user.getUsername());
                 session.setAttribute("role", user.getRole().toString());
+                session.setAttribute("dailyTokens", user.getDailyTokens());
+                session.setAttribute("monthlyTokens", user.getMonthlyTokens());
 
                 if (user.getRole() == Role.MANAGER) {
                     response.sendRedirect("manager/users");
