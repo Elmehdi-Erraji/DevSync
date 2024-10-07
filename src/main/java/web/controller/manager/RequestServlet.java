@@ -94,26 +94,39 @@ public class RequestServlet extends HttpServlet {
     }
 
 
-    private void processDeleteRequest (Optional<Request> request) {
-        if (request.isPresent()) {
-            Task task = request.get().getTask();
-            User user = request.get().getUser();
-
-            if (user == null) {
-                throw new NullPointerException("User associated with the request is null.");
-            }
-
-
-            if(request.get().getRequestType() == RequestType.valueOf("REJECT"))
-            {
-                userService.updateUserTokens((long) user.getId(), user.getDailyTokens()+1, user.getMonthlyTokens());
-            }else if (request.get().getRequestType() == RequestType.valueOf("DELETE")){
-                userService.updateUserTokens((long) user.getId(), user.getDailyTokens(), user.getMonthlyTokens()+1);
-            }
-
-            requestService.deleteRequest(request.get().getId());
+    private void processDeleteRequest(Optional<Request> request) {
+        if (!request.isPresent()) {
+            throw new IllegalArgumentException("Request is not present.");
         }
 
+        Request req = request.get();
+        Task task = req.getTask();
+        User user = req.getUser();
 
+        if (user == null) {
+            throw new NullPointerException("User associated with the request is null.");
+        }
+
+        if (task == null) {
+            throw new NullPointerException("Task associated with the request is null.");
+        }
+
+        // Update tokens based on request type
+        if (req.getRequestType() == RequestType.REJECT) {
+            // Only update daily tokens
+            Integer dailyTokens = user.getDailyTokens();
+            if (dailyTokens != null) {
+                userService.updateUserTokens((long) user.getId(), dailyTokens + 1, user.getMonthlyTokens());
+            }
+        } else if (req.getRequestType() == RequestType.DELETE) {
+            // Only update monthly tokens
+            Integer monthlyTokens = user.getMonthlyTokens();
+            if (monthlyTokens != null) {
+                userService.updateUserTokens((long) user.getId(), user.getDailyTokens(), monthlyTokens + 1);
+            }
+        }
+
+        // Now delete the request from the system
+        requestService.deleteRequest(req.getId());
     }
 }

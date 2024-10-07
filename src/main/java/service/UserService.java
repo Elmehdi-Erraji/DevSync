@@ -43,7 +43,15 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public void updateUserTokens(Long userId, int dailyTokens, int monthlyTokens) {
-        userRepository.updateTokens(userId, dailyTokens, monthlyTokens);
+    public void updateUserTokens(Long userId, Integer dailyTokens, Integer monthlyTokens) {
+        User user = userRepository.findUserById(userId);
+        if (dailyTokens != null) {
+            user.setDailyTokens(dailyTokens);
+        }
+        if (monthlyTokens != null) {
+            user.setMonthlyTokens(monthlyTokens);
+        }
+        userRepository.insertUser(user);
     }
+
 }
