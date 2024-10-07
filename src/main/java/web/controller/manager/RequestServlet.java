@@ -166,19 +166,25 @@ public class RequestServlet extends HttpServlet {
             throw new NullPointerException("Task associated with the request is null.");
         }
 
+        // Check if it's a REJECT type of request and handle doubling daily tokens
         if (req.getRequestType() == RequestType.REJECT) {
             Integer dailyTokens = user.getDailyTokens();
             if (dailyTokens != null) {
-                userService.updateUserTokens((long) user.getId(), dailyTokens + 1, user.getMonthlyTokens());
+                // Double the user's daily tokens
+                userService.updateUserTokens((long) user.getId(), dailyTokens * 2, user.getMonthlyTokens());
             }
-        } else if (req.getRequestType() == RequestType.DELETE) {
+        }
+        // Check if it's a DELETE type of request and handle doubling monthly tokens
+        else if (req.getRequestType() == RequestType.DELETE) {
             Integer monthlyTokens = user.getMonthlyTokens();
             if (monthlyTokens != null) {
-                userService.updateUserTokens((long) user.getId(), user.getDailyTokens(), monthlyTokens + 1);
+                // Double the user's monthly tokens
+                userService.updateUserTokens((long) user.getId(), user.getDailyTokens(), monthlyTokens * 2);
             }
         }
 
-        requestService.deleteRequest(req.getId());
+        // Change the request status to REJECTED instead of deleting the request
+        requestService.updateRequestStatus(req.getId(), RequestStatus.REJECTED); // Pass ID and status separately
     }
 
     private void processAcceptRequest(Long taskId, Long assignedUserId) {

@@ -140,8 +140,10 @@
                                                             <a href="tasks?action=statusUpdate&id=<%= task.getId() %>" class="btn btn-sm btn-primary">Edit</a>
 
                                                             <%
-                                                                Integer dailyTokens = (Integer) session.getAttribute("dailyTokens");
-                                                                if (dailyTokens > 0) {
+                                                                // Check if the task is NOT refused to display the Reject button
+                                                                if (!task.isRefused()) {
+                                                                    Integer dailyTokens = (Integer) session.getAttribute("dailyTokens");
+                                                                    if (dailyTokens > 0) {
                                                             %>
                                                             <form action="${pageContext.request.contextPath}/request" method="POST" class="d-inline">
                                                                 <input type="hidden" name="taskId" value="<%= task.getId() %>"/>
@@ -150,13 +152,16 @@
                                                                 <button type="submit" class="btn btn-sm btn-secondary">Reject</button>
                                                             </form>
                                                             <%
+                                                                    }
                                                                 }
                                                             %>
 
                                                             <%-- Delete Button --%>
                                                             <%
-                                                                Integer monthlyTokens = (Integer) session.getAttribute("monthlyTokens");
-                                                                if (monthlyTokens > 0) {
+                                                                // Check if the task is NOT refused to display the Delete button
+                                                                if (!task.isRefused()) {
+                                                                    Integer monthlyTokens = (Integer) session.getAttribute("monthlyTokens");
+                                                                    if (monthlyTokens > 0) {
                                                             %>
                                                             <form action="${pageContext.request.contextPath}/request" method="POST" class="d-inline">
                                                                 <input type="hidden" name="taskId" value="<%= task.getId() %>"/>
@@ -165,10 +170,12 @@
                                                                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                                             </form>
                                                             <%
+                                                                    }
                                                                 }
                                                             %>
-
                                                         </td>
+
+
                                                     </tr>
 
 

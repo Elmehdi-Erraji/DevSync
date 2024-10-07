@@ -134,7 +134,7 @@
                                                     <form action="${pageContext.request.contextPath}/manager/request" method="POST" class="d-inline">
                                                         <input type="hidden" name="requestId" value="<%= req.getId() %>"/>
                                                         <input type="hidden" name="action" value="DELETE"> <!-- Delete type -->
-                                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                                        <button type="submit" class="btn btn-sm btn-danger">Decline</button>
                                                     </form>
                                                 </td>
                                             </tr>

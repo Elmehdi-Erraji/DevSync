@@ -110,7 +110,6 @@ public class TaskServlet extends HttpServlet {
                 System.out.println("No tags selected.");
             }
 
-            // Handle create and update operations
             if (id != null && !id.isEmpty()) {
                 task.setId(Long.parseLong(id));
                 taskService.updateTask(task);
@@ -119,6 +118,8 @@ public class TaskServlet extends HttpServlet {
             }
         }
 
-        response.sendRedirect("tasks?status=success"); // Redirect after processing
+
+        
+        response.sendRedirect("tasks?status=success");
     }
 }
