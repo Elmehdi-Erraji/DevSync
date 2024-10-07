@@ -21,11 +21,11 @@ public class Task {
     private String dueDate;
 
     @Enumerated(EnumType.STRING)
-    private TaskStatus status;// NEW, IN_PROGRESS, DONE
+    private TaskStatus status;
 
     private boolean isRefused = false;
 
-    // Relationships
+
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private User creator; // The user or manager who created the task

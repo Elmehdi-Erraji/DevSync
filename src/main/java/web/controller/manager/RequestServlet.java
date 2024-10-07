@@ -3,6 +3,7 @@ package web.controller.manager;
 import domain.Request;
 import domain.Task;
 import domain.User;
+import domain.enums.RequestStatus;
 import domain.enums.RequestType;
 import service.RequestService;
 import service.TaskService;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @WebServlet("/manager/request")
 public class RequestServlet extends HttpServlet {
@@ -28,8 +30,8 @@ public class RequestServlet extends HttpServlet {
     public void init() throws ServletException {
         try {
             requestService = new RequestService();
-            taskService = new TaskService(); // Ensure to initialize your TaskService
-            userService = new UserService();   // Ensure to initialize your UserService
+            taskService = new TaskService();
+            userService = new UserService();
         } catch (Exception e) {
             throw new ServletException("Failed to initialize RequestServlet", e);
         }
@@ -37,31 +39,83 @@ public class RequestServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Request> requestList = requestService.getAllRequests(); // Fetch all requests
-        request.setAttribute("requests", requestList);
-        request.getRequestDispatcher("/views/dashboard/manager/requests/home.jsp").forward(request, response);
+        String action = request.getParameter("action");
+
+        if (action != null && action.equals("ACCEPT")) {
+            handleAcceptRedirect(request, response);
+        } else {
+            List<Request> requestList = requestService.getAllRequests();
+            request.setAttribute("requests", requestList);
+            request.getRequestDispatcher("/views/dashboard/manager/requests/home.jsp").forward(request, response);
+        }
+    }
+
+    private void handleAcceptRedirect(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String requestIdParam = request.getParameter("requestId");
+
+        Long requestId;
+        try {
+            requestId = Long.parseLong(requestIdParam);
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Request ID format.");
+            return;
+        }
+
+        Optional<Request> requestToProcess = requestService.getRequestById(requestId);
+
+        if (requestToProcess.isPresent()) {
+            Request req = requestToProcess.get();
+            Task task = req.getTask();
+
+            // Ensure you set the requestId attribute here
+            request.setAttribute("requestId", requestId); // Set the request ID attribute
+
+            if (task == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No task associated with the request.");
+                return;
+            }
+
+            Long userRequestId = (long) req.getUser().getId();
+
+            // Update the request status to approved
+            requestService.updateRequestStatus(requestId, RequestStatus.APPROVED); // Update the request status to APPROVED
+
+            request.setAttribute("taskTitle", task.getTitle());
+            request.setAttribute("taskDescription", task.getDescription());
+            request.setAttribute("taskId", task.getId());
+            request.setAttribute("requestUserId", req.getUser().getId());
+            List<User> users = userService.findAllUsers();
+            List<User> filteredUsers = users.stream()
+                    .filter(user -> user.getId() != userRequestId) // Use primitive comparison
+                    .collect(Collectors.toList());
+
+            request.setAttribute("users", filteredUsers);
+
+            request.getRequestDispatcher("/views/dashboard/manager/requests/reassignTask.jsp").forward(request, response);
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Request not found.");
+        }
     }
 
     @Override
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String requestIdParam = request.getParameter("requestId");
+        System.out.println("Received requestIdParam: " + requestIdParam); // Debugging line
 
-        // Check if the requestId parameter is present and not empty
         if (requestIdParam == null || requestIdParam.isEmpty()) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request ID is required.");
-            return; // Stop further processing
+            return;
         }
 
         Long requestId;
         try {
-            requestId = Long.parseLong(requestIdParam); // Safely parse the ID
+            requestId = Long.parseLong(requestIdParam);
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Request ID format.");
-            return; // Stop further processing
+            return;
         }
 
-        Optional<Request> requestToProcess = requestService.getRequestById(requestId); // Use Optional
+        Optional<Request> requestToProcess = requestService.getRequestById(requestId);
 
         if (requestToProcess.isEmpty()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Request not found");
@@ -69,7 +123,6 @@ public class RequestServlet extends HttpServlet {
         }
 
         String action = request.getParameter("action");
-
         if (action == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action is required.");
             return;
@@ -77,22 +130,24 @@ public class RequestServlet extends HttpServlet {
 
         switch (action.toUpperCase()) {
             case "ACCEPT":
-               // processAcceptRequest(requestToProcess.get());
+                Long taskId = Long.parseLong(request.getParameter("taskId"));
+                Long assignedUserId = Long.parseLong(request.getParameter("newAssignedUser")); // Ensure this matches your form input name
+                processAcceptRequest(taskId, assignedUserId);
                 break;
             case "DELETE":
-                processDeleteRequest(requestToProcess); // Pass Optional<Request> directly
+                processDeleteRequest(requestToProcess);
                 break;
             case "REJECT":
-                //processRejectRequest(requestToProcess.get());
+                // Handle reject action (implementation can be added later)
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
                 return;
         }
 
-        response.sendRedirect("request"); // Redirect to the request list
+        // Redirect back to the request list
+        response.sendRedirect("request");
     }
-
 
     private void processDeleteRequest(Optional<Request> request) {
         if (!request.isPresent()) {
@@ -111,22 +166,38 @@ public class RequestServlet extends HttpServlet {
             throw new NullPointerException("Task associated with the request is null.");
         }
 
-        // Update tokens based on request type
         if (req.getRequestType() == RequestType.REJECT) {
-            // Only update daily tokens
             Integer dailyTokens = user.getDailyTokens();
             if (dailyTokens != null) {
                 userService.updateUserTokens((long) user.getId(), dailyTokens + 1, user.getMonthlyTokens());
             }
         } else if (req.getRequestType() == RequestType.DELETE) {
-            // Only update monthly tokens
             Integer monthlyTokens = user.getMonthlyTokens();
             if (monthlyTokens != null) {
                 userService.updateUserTokens((long) user.getId(), user.getDailyTokens(), monthlyTokens + 1);
             }
         }
 
-        // Now delete the request from the system
         requestService.deleteRequest(req.getId());
+    }
+
+    private void processAcceptRequest(Long taskId, Long assignedUserId) {
+        System.out.println("test test test test ");
+        Task task = taskService.findTaskById(taskId);
+
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found.");
+        }
+
+        User assignedUser = userService.findUserById(assignedUserId);
+
+        if (assignedUser == null) {
+            throw new IllegalArgumentException("Assigned user not found.");
+        }
+
+        // Update the task with new assigned user and mark it as refused
+        task.setAssignedUser(assignedUser);
+        task.setRefused(true); // Change the status to refused
+        taskService.updateTask(task); // Save changes to the database
     }
 }

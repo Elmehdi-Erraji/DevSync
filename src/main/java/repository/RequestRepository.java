@@ -2,6 +2,7 @@ package repository;
 
 import domain.Request;
 import domain.User;
+import domain.enums.RequestStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
@@ -63,6 +64,16 @@ public class RequestRepository {
     public List<Request> findAll() {
         TypedQuery<Request> query = entityManager.createQuery("SELECT r FROM Request r", Request.class);
         return query.getResultList();
+    }
+
+    public void updateRequestStatus(Long requestId, RequestStatus status) {
+        entityManager.getTransaction().begin();
+        Request request = entityManager.find(Request.class, requestId);
+        if (request != null) {
+            request.setStatus(status); // Update status
+            entityManager.merge(request); // Save changes
+        }
+        entityManager.getTransaction().commit();
     }
 
 }

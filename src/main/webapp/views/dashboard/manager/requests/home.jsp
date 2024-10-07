@@ -124,9 +124,9 @@
                                                 <td><%= req.getRequestDate() %></td>
                                                 <td>
                                                     <!-- Accept Button -->
-                                                    <form action="${pageContext.request.contextPath}/request" method="POST" class="d-inline">
+                                                    <form action="${pageContext.request.contextPath}/manager/request" method="GET" class="d-inline">
                                                         <input type="hidden" name="requestId" value="<%= req.getId() %>"/>
-                                                        <input type="hidden" name="action" value="ACCEPT"> <!-- Accept type -->
+                                                        <input type="hidden" name="action" value="ACCEPT"/> <!-- Specify the action -->
                                                         <button type="submit" class="btn btn-sm btn-success">Accept</button>
                                                     </form>
 

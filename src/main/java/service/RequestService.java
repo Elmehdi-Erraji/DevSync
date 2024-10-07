@@ -53,4 +53,16 @@ public class RequestService {
     public void deleteRequest(Long tagId) {
         requestRepository.delete(tagId);
     }
+
+
+    public Request updateRequestStatus(Long requestId, RequestStatus newStatus) {
+        Optional<Request> optionalRequest = requestRepository.findById(requestId);
+        if (optionalRequest.isPresent()) {
+            Request request = optionalRequest.get();
+            request.setStatus(newStatus);  // Change status to the new status
+            return requestRepository.save(request); // Save the updated request
+        } else {
+            throw new RuntimeException("Request not found with id: " + requestId);
+        }
+    }
 }
