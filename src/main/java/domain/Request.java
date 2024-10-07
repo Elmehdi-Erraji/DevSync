@@ -1,6 +1,7 @@
 package domain;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import domain.enums.RequestStatus;
@@ -8,8 +9,7 @@ import domain.enums.RequestType; // Import the new enum
 
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
+@Data
 @Entity
 public class Request {
 

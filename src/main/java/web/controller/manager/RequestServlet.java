@@ -3,6 +3,7 @@ package web.controller.manager;
 import domain.Request;
 import domain.Task;
 import domain.User;
+import domain.enums.RequestType;
 import service.RequestService;
 import service.TaskService;
 import service.UserService;
@@ -89,27 +90,28 @@ public class RequestServlet extends HttpServlet {
                 return;
         }
 
-        response.sendRedirect("/manager/request"); // Redirect to the request list
+        response.sendRedirect("request"); // Redirect to the request list
     }
 
 
-    private void processDeleteRequest(Optional<Request> request) {
+    private void processDeleteRequest (Optional<Request> request) {
         if (request.isPresent()) {
             Task task = request.get().getTask();
             User user = request.get().getUser();
 
-            // Check if user is null
             if (user == null) {
                 throw new NullPointerException("User associated with the request is null.");
             }
 
-            // Ensure you have valid tokens before proceeding
-            userService.updateUserTokens((long) user.getId(), user.getDailyTokens(), user.getMonthlyTokens() + 1); // Update monthly tokens
-            taskService.deleteTask(task.getId()); // Delete the task
 
-            requestService.deleteRequest(request.get().getId()); // Delete the request
-        } else {
-            throw new NullPointerException("Request is empty when trying to delete.");
+            if(request.get().getRequestType() == RequestType.valueOf("REJECT"))
+            {
+                userService.updateUserTokens((long) user.getId(), user.getDailyTokens()+1, user.getMonthlyTokens());
+            }else if (request.get().getRequestType() == RequestType.valueOf("DELETE")){
+                userService.updateUserTokens((long) user.getId(), user.getDailyTokens(), user.getMonthlyTokens()+1);
+            }
+
+            requestService.deleteRequest(request.get().getId());
         }
 
 

@@ -50,11 +50,7 @@ public class RequestService {
     }
 
 
-    public void deleteRequest(Long id) {
-        try {
-            requestRepository.delete(id);
-        } catch (Exception e) {
-            throw new RuntimeException("Error while deleting the request: " + e.getMessage(), e);
-        }
+    public void deleteRequest(Long tagId) {
+        requestRepository.delete(tagId);
     }
 }
