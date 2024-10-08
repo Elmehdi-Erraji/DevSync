@@ -18,7 +18,6 @@ public class RequestRepository {
         this.entityManager = entityManager;
     }
 
-    // Save or update a request
     public Request save(Request request) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
@@ -38,13 +37,11 @@ public class RequestRepository {
         }
     }
 
-    // Find request by ID
     public Optional<Request> findById(Long id) {
         Request request = entityManager.find(Request.class, id);
         return Optional.ofNullable(request);
     }
 
-    // Delete request by ID
     public void delete(Long id) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
@@ -61,6 +58,7 @@ public class RequestRepository {
             throw new RuntimeException("Error while deleting the request: " + e.getMessage(), e);
         }
     }
+
     public List<Request> findAll() {
         TypedQuery<Request> query = entityManager.createQuery("SELECT r FROM Request r", Request.class);
         return query.getResultList();
@@ -70,8 +68,8 @@ public class RequestRepository {
         entityManager.getTransaction().begin();
         Request request = entityManager.find(Request.class, requestId);
         if (request != null) {
-            request.setStatus(status); // Update status
-            entityManager.merge(request); // Save changes
+            request.setStatus(status);
+            entityManager.merge(request);
         }
         entityManager.getTransaction().commit();
     }

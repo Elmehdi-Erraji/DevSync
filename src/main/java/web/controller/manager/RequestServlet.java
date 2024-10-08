@@ -135,7 +135,7 @@ public class RequestServlet extends HttpServlet {
                 processAcceptRequest(taskId, assignedUserId);
                 break;
             case "DELETE":
-                processDeleteRequest(requestToProcess);
+                processDeclineRequest(requestToProcess);
                 break;
             case "REJECT":
                 // Handle reject action (implementation can be added later)
@@ -149,7 +149,7 @@ public class RequestServlet extends HttpServlet {
         response.sendRedirect("request");
     }
 
-    private void processDeleteRequest(Optional<Request> request) {
+    private void processDeclineRequest(Optional<Request> request) {
         if (!request.isPresent()) {
             throw new IllegalArgumentException("Request is not present.");
         }
@@ -166,26 +166,30 @@ public class RequestServlet extends HttpServlet {
             throw new NullPointerException("Task associated with the request is null.");
         }
 
-        // Check if it's a REJECT type of request and handle doubling daily tokens
         if (req.getRequestType() == RequestType.REJECT) {
-            Integer dailyTokens = user.getDailyTokens();
-            if (dailyTokens != null) {
-                // Double the user's daily tokens
-                userService.updateUserTokens((long) user.getId(), dailyTokens * 2, user.getMonthlyTokens());
-            }
-        }
-        // Check if it's a DELETE type of request and handle doubling monthly tokens
-        else if (req.getRequestType() == RequestType.DELETE) {
-            Integer monthlyTokens = user.getMonthlyTokens();
-            if (monthlyTokens != null) {
-                // Double the user's monthly tokens
-                userService.updateUserTokens((long) user.getId(), user.getDailyTokens(), monthlyTokens * 2);
-            }
+            processDailyToken(user);
+        } else if (req.getRequestType() == RequestType.DELETE) {
+            processMonthlyToken(user);
         }
 
         // Change the request status to REJECTED instead of deleting the request
         requestService.updateRequestStatus(req.getId(), RequestStatus.REJECTED); // Pass ID and status separately
     }
+
+    private void processDailyToken(User user) {
+        if (user.getDailyTokens() == 0) {
+            userService.updateDailyTokens((long) user.getId(), user.getDailyTokens() + 1); // Return the used daily token
+        }
+        userService.updateDailyTokens((long) user.getId(), user.getDailyTokens() * 2); // Double the daily tokens
+    }
+
+    private void processMonthlyToken(User user) {
+        if (user.getMonthlyTokens() == 0) {
+            userService.updateMonthlyTokens((long) user.getId(), user.getMonthlyTokens() + 1); // Return the used monthly token
+        }
+        userService.updateMonthlyTokens((long) user.getId(), user.getMonthlyTokens() * 2); // Double the monthly tokens
+    }
+
 
     private void processAcceptRequest(Long taskId, Long assignedUserId) {
         System.out.println("test test test test ");
