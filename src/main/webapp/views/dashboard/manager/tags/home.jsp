@@ -1,3 +1,5 @@
+<%@include file="../partials/sessionCheck.jsp"%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
 <%@ page import="domain.Tag" %>
@@ -7,6 +9,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <%@ include file="../partials/head.jsp" %>
+
 <body>
 <div class="wrapper">
 

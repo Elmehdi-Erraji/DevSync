@@ -69,4 +69,19 @@ public class TaskRepository {
             throw e;
         }
     }
+
+
+    public List<Task> findTasksAssignedToUser(Long userId) {
+        TypedQuery<Task> query = entityManager.createQuery(
+                "SELECT t FROM Task t WHERE t.assignedUser.id = :userId AND t.creator.id != :userId", Task.class);
+        query.setParameter("userId", userId);
+        return query.getResultList();
+    }
+
+    public List<Task> findTasksCreatedByUser(Long userId) {
+        TypedQuery<Task> query = entityManager.createQuery(
+                "SELECT t FROM Task t WHERE t.assignedUser.id = :userId AND t.creator.id = :userId", Task.class);
+        query.setParameter("userId", userId);
+        return query.getResultList();
+    }
 }

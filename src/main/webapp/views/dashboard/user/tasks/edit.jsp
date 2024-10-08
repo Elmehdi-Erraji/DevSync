@@ -1,4 +1,3 @@
-<%@include file="../partials/sessionCheck.jsp"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
@@ -6,6 +5,7 @@
 <%@ page import="domain.User" %>
 <%@ page import="domain.Tag" %>
 <%@ page import="domain.enums.Role" %>
+<%@ page import="domain.enums.TaskStatus" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
@@ -64,7 +64,7 @@
                                 <div class="row">
                                     <div class="col-lg-6">
 
-                                        <form action="${pageContext.request.contextPath}/manager/tasks" method="POST" id="updateTaskForm">
+                                        <form action="${pageContext.request.contextPath}/user/tasks" method="POST" id="updateTaskForm">
                                             <%
                                                 Task task = (Task) request.getAttribute("task");
                                             %>
@@ -85,39 +85,22 @@
                                                 <label for="dueDate" class="form-label">Due Date</label>
                                                 <input type="date" id="dueDate" class="form-control" name="dueDate" value="<%= task.getDueDate() %>" required>
                                             </div>
-
+                                            <!-- Status Selection -->
                                             <div class="mb-3">
-                                                <label for="creator" class="form-label">Creator</label>
-                                                <select class="form-select" id="creator" name="creator" required>
+                                                <label for="" class="form-label">Task Status</label>
+                                                <select id="" class="form-select" name="status" required>
                                                     <%
-                                                        List<User> userList = (List<User>) request.getAttribute("users");
-                                                        if (userList != null && !userList.isEmpty()) {
-                                                            for (User user : userList) {
-                                                                if (user.getRole() == Role.USER) { // Check for USER role
+                                                        for (TaskStatus status : TaskStatus.values()) {
+                                                            boolean selected = task.getStatus() == status;
                                                     %>
-                                                    <option value="<%= user.getId() %>" <%= task.getCreator().getId() == user.getId() ? "selected" : "" %>><%= user.getUsername() %></option>
+                                                    <option value="<%= status.name() %>" <%= selected ? "selected" : "" %>><%= status.name() %></option>
                                                     <%
-                                                                }
-                                                            }
                                                         }
                                                     %>
                                                 </select>
                                             </div>
-
-                                            <div class="mb-3">
-                                                <label for="assignedUser" class="form-label">Assigned User</label>
-                                                <select class="form-select" id="assignedUser" name="assignedUser" required>
-                                                    <%
-                                                        if (userList != null && !userList.isEmpty()) {
-                                                            for (User user : userList) {
-                                                    %>
-                                                    <option value="<%= user.getId() %>" <%= task.getAssignedUser().getId() == user.getId() ? "selected" : "" %>><%= user.getUsername() %></option>
-                                                    <%
-                                                            }
-                                                        }
-                                                    %>
-                                                </select>
-                                            </div>
+                                            <input type="hidden" name="creator" value="<%= session.getAttribute("id") %>">
+                                            <input type="hidden" name="assignedUser" value="<%= session.getAttribute("id") %>">
 
                                             <div class="mb-3">
                                                 <label for="tags" class="form-label">Tags</label>
@@ -135,6 +118,8 @@
                                                     %>
                                                 </select>
                                             </div>
+
+
 
                                             <button type="submit" id="submitButton" class="btn btn-primary" name="updateTask">Update Task</button>
                                             <a href="tasks" class="btn btn-secondary">Go Back</a>

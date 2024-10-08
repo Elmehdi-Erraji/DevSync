@@ -1,4 +1,15 @@
-<%@include file="../partials/sessionCheck.jsp"%>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="java.util.List" %>
+<%@ page import="domain.Task" %>
+<%@ page import="domain.User" %>
+<%@ page import="domain.Tag" %>
+<%@ page import="domain.enums.Role" %>
+<%@ page import="domain.enums.TaskStatus" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +48,7 @@
                                     <li class="breadcrumb-item active">Welcome!</li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">Create a user here</h4>
+                            <h4 class="page-title">Update a task here</h4>
                         </div>
                     </div>
                 </div>
@@ -47,22 +58,35 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="header-title">Add a new user</h4>
+                                <h4 class="header-title">Task Update</h4>
                             </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-lg-6">
 
-                                        <form action="${pageContext.request.contextPath}/manager/tags" method="POST" id="editTagForm">
-                                            <input type="hidden" name="id" value="${tag.id}"> <!-- Hidden field for the tag ID -->
+                                        <form action="${pageContext.request.contextPath}/user/tasks" method="POST" id="updateTaskForm">
+                                            <%
+                                                Task task = (Task) request.getAttribute("task");
+                                            %>
+                                            <input type="hidden" name="id" value="<%= task.getId() %>"/>
+                                            <input type="hidden" name="_method" value="statusUpdate"/> <!-- Use PUT for updates -->
 
                                             <div class="mb-3">
-                                                <label for="name" class="form-label">Tag Name</label>
-                                                <input type="text" id="name" class="form-control" name="name" placeholder="Enter tag name" value="${tag.name}" required>
+                                                <label for="" class="form-label">Task Status</label>
+                                                <select id="" class="form-select" name="status" required>
+                                                    <%
+                                                        for (TaskStatus status : TaskStatus.values()) {
+                                                            boolean selected = task.getStatus() == status;
+                                                    %>
+                                                    <option value="<%= status.name() %>" <%= selected ? "selected" : "" %>><%= status.name() %></option>
+                                                    <%
+                                                        }
+                                                    %>
+                                                </select>
                                             </div>
 
-                                            <button type="submit" id="submitButton" class="btn btn-primary" name="editTag">Update</button>
-                                            <a href="tags" class="btn btn-secondary">Go Back</a>
+                                            <button type="submit" id="submitButton" class="btn btn-primary" name="updateTask">Update Task</button>
+                                            <a href="tasks" class="btn btn-secondary">Go Back</a>
                                         </form>
 
 

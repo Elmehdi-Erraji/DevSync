@@ -1,6 +1,6 @@
-package domain.enums;
+    package domain.enums;
 
-public enum Role {
-    MANAGER,
-    USER
-}
+    public enum Role {
+        MANAGER,
+        USER
+    }

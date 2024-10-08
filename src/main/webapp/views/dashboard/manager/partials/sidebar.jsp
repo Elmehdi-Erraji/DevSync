@@ -82,7 +82,7 @@
                 </a>
                 <div class="collapse" id="requestManagement">
                     <ul class="side-nav-second-level">
-                        <li><a href="#">Requests List</a></li>
+                        <li><a href="request">Requests List</a></li>
                     </ul>
                 </div>
             </li>

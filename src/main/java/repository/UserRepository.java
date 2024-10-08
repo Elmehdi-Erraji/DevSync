@@ -68,4 +68,35 @@ public class UserRepository {
         TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u", User.class);
         return query.getResultList();
     }
+
+    public User findByEmail(String email) {
+        try {
+            TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
+            query.setParameter("email", email);
+            return query.getSingleResult();  // Return the user if found
+        } catch (Exception e) {
+            // If no user is found, return null
+            return null;
+        }
+    }
+
+    public void updateTokens(Long userId, int dailyTokens, int monthlyTokens) {
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+            User user = entityManager.find(User.class, userId);
+            if (user != null) {
+                user.setDailyTokens(dailyTokens);
+                user.setMonthlyTokens(monthlyTokens);
+                entityManager.merge(user); // Update the user entity
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback(); // Rollback on error
+            }
+            throw new RuntimeException("Failed to update user tokens: " + e.getMessage(), e);
+        }
+    }
+
 }

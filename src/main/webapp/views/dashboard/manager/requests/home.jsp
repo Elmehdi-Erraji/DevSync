@@ -2,16 +2,16 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
-<%@ page import="domain.User" %>
-<%@ page import="domain.Task" %>
 <%@ page import="domain.Tag" %>
-<%@ page import="domain.enums.TaskStatus" %>
+<%@ page import="domain.Request" %>
+<%@ page import="domain.enums.RequestStatus" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 
 <!DOCTYPE html>
 <html lang="en">
 <%@ include file="../partials/head.jsp" %>
+
 <body>
 <div class="wrapper">
 
@@ -25,7 +25,6 @@
     <!-- ========== Left Sidebar End ========== -->
 
 
-
     <!-- ============================================================== -->
     <!-- Start Page Content here -->
     <!-- ============================================================== -->
@@ -34,79 +33,86 @@
         <div class="content">
 
             <!-- Start Content-->
-            <div class="container-fluid">
 
-                <!-- start page title -->
+            <div class="container-fluid">
+                <!-- Start Page Title -->
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box">
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Mehdi</a></li>
-                                    <li class="breadcrumb-item active">Admin Panel</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                    <li class="breadcrumb-item active">Tags !</li>
                                 </ol>
                             </div>
-                            <h4 class="page-title">Tasks List</h4>
+                            <h4 class="page-title">Welcome!</h4>
                         </div>
                     </div>
                 </div>
-                <!-- end page title -->
+                <!-- End Page Title -->
 
-                <!-- Display Tasks Table -->
+                <div class="row">
+                    <div class="col-xxl-3 col-sm-6">
+                        <div class="card widget-flat text-bg-primary">
+                            <div class="card-body">
+                                <div class="float-end">
+                                    <i class="ri-group-2-line widget-icon"></i>
+                                </div>
+                                <h6 class="text-uppercase mt-0" title="Users">Requests</h6>
+                                <h2 class="my-2">5</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-body p-0
-">
+                            <div class="card-body p-0">
                                 <div class="p-3">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <a href="tasks?action=create" class="btn btn-primary" id="addButton">Add A Task</a>
-                                        </div>
-                                    </div>
+
                                 </div>
-                                <!-- Tasks Table -->
-                                <div id="tasks-table-collapse" class="collapse show">
+
+                                <div id="requests-table-collapse" class="collapse show">
                                     <div class="table-responsive">
                                         <table class="table table-nowrap table-hover mb-0">
                                             <thead>
                                             <tr>
+                                                <th>Request ID</th>
                                                 <th>Task ID</th>
-                                                <th>Title</th>
-                                                <th>Description</th>
-                                                <th>Due Date</th>
+                                                <th>User Name</th>
+                                                <th>Request Type</th>
                                                 <th>Status</th>
-                                                <th>Creator</th>
-                                                <th>Assigned User</th>
-                                                <th>Tags</th>
+                                                <th>Request Date</th>
                                                 <th>Actions</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <%
-                                                List<Task> taskList = (List<Task>) request.getAttribute("tasks");
-                                                if (taskList != null && !taskList.isEmpty()) {
-                                                    for (Task task : taskList) {
+                                                List<Request> reqList = (List<Request>) request.getAttribute("requests");
+                                                if (reqList != null && !reqList.isEmpty()) {
+                                                    for (Request req : reqList) {
                                             %>
                                             <tr>
-                                                <td><%= task.getId() %></td>
-                                                <td><%= task.getTitle() %></td>
-                                                <td><%= task.getDescription() %></td>
-                                                <td><%= task.getDueDate() %></td>
+                                                <td><%= req.getId() %></td>
+                                                <td><%= req.getTask().getId() %></td>
+                                                <td><%= req.getUser().getUsername()%></td>
+                                                <td><%= req.getRequestType() %></td>
                                                 <td>
                                                     <%
-                                                        TaskStatus status = task.getStatus();
-                                                        if (status == TaskStatus.NEW) {
+                                                        RequestStatus status = req.getStatus();
+                                                        if (status == RequestStatus.PENDING) {
                                                     %>
-                                                    <span class="badge bg-info-subtle text-info">New</span>
+                                                    <span class="badge bg-info-subtle text-info">Pending</span>
                                                     <%
-                                                    } else if (status == TaskStatus.IN_PROGRESS) {
+                                                    } else if (status == RequestStatus.APPROVED) {
                                                     %>
-                                                    <span class="badge bg-warning-subtle text-warning">In Progress</span>
+                                                    <span class="badge bg-success-subtle text-success">Approved</span>
                                                     <%
-                                                    } else if (status == TaskStatus.DONE) {
+                                                    } else if (status == RequestStatus.REJECTED) {
                                                     %>
-                                                    <span class="badge bg-pink-subtle text-pink">Done</span>
+                                                    <span class="badge bg-danger-subtle text-danger">Rejected</span>
                                                     <%
                                                     } else {
                                                     %>
@@ -115,42 +121,42 @@
                                                         }
                                                     %>
                                                 </td>
-
-                                                <td><%= task.getCreator().getUsername() %></td>
-                                                <td><%= task.getAssignedUser().getUsername() %></td>
+                                                <td><%= req.getRequestDate() %></td>
                                                 <td>
                                                     <%
-                                                        if (task.getTags() != null && !task.getTags().isEmpty()) {
-                                                            for (Tag tag : task.getTags()) {
+                                                        if (status == RequestStatus.PENDING) {
                                                     %>
-                                                    <span class="badge bg-info"><%= tag.getName() %></span>
+                                                    <!-- Accept Button -->
+                                                    <form action="${pageContext.request.contextPath}/manager/request" method="GET" class="d-inline">
+                                                        <input type="hidden" name="requestId" value="<%= req.getId() %>"/>
+                                                        <input type="hidden" name="action" value="ACCEPT"/> <!-- Specify the action -->
+                                                        <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                                    </form>
+
+                                                    <!-- Decline Button -->
+                                                    <form action="${pageContext.request.contextPath}/manager/request" method="POST" class="d-inline">
+                                                        <input type="hidden" name="requestId" value="<%= req.getId() %>"/>
+                                                        <input type="hidden" name="action" value="DELETE"> <!-- Delete type -->
+                                                        <button type="submit" class="btn btn-sm btn-danger">Decline</button>
+                                                    </form>
                                                     <%
-                                                        }
                                                     } else {
                                                     %>
-                                                    <span>No Tags</span>
+                                                    <!-- View Details Button -->
+                                                    <a href="${pageContext.request.contextPath}/manager/request/details?requestId=<%= req.getId() %>" class="btn btn-sm btn-info">View Details</a>
                                                     <%
                                                         }
                                                     %>
                                                 </td>
-                                                <td>
-                                                    <!-- Update Button -->
-                                                    <a href="tasks?action=edit&id=<%= task.getId() %>" class="btn btn-sm btn-primary">Edit</a>
 
-                                                    <!-- Delete Button with form for POST method -->
-                                                    <form action="tasks" method="POST" class="d-inline">
-                                                        <input type="hidden" name="id" value="<%= task.getId() %>"/>
-                                                        <input type="hidden" name="_method" value="delete"/>
-                                                        <button type="submit" class="btn btn-sm btn-danger delete-btn">Delete</button>
-                                                    </form>
-                                                </td>
+
                                             </tr>
                                             <%
                                                 }
                                             } else {
                                             %>
                                             <tr>
-                                                <td colspan="9" class="text-center">No tasks available</td>
+                                                <td colspan="7" class="text-center">No requests available</td>
                                             </tr>
                                             <%
                                                 }
@@ -160,19 +166,24 @@
                                     </div>
                                 </div>
 
-                                <!-- End Tasks Table -->
+
+
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-            </div> <!-- container -->
 
-        </div> <!-- content -->
+            <!-- End Content-->
+        </div>
+
+
 
         <!-- Footer Start -->
         <%@ include file="../partials/footer.jsp" %>
         <!-- end Footer -->
+
     </div>
 
 
