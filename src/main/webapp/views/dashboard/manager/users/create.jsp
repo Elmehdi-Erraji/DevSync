@@ -1,4 +1,3 @@
-<%@include file="../partials/sessionCheck.jsp"%>
 
 <!DOCTYPE html>
 <html lang="en">

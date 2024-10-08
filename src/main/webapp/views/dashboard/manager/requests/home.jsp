@@ -81,7 +81,7 @@
                                             <tr>
                                                 <th>Request ID</th>
                                                 <th>Task ID</th>
-                                                <th>User ID</th>
+                                                <th>User Name</th>
                                                 <th>Request Type</th>
                                                 <th>Status</th>
                                                 <th>Request Date</th>
@@ -123,6 +123,9 @@
                                                 </td>
                                                 <td><%= req.getRequestDate() %></td>
                                                 <td>
+                                                    <%
+                                                        if (status == RequestStatus.PENDING) {
+                                                    %>
                                                     <!-- Accept Button -->
                                                     <form action="${pageContext.request.contextPath}/manager/request" method="GET" class="d-inline">
                                                         <input type="hidden" name="requestId" value="<%= req.getId() %>"/>
@@ -130,13 +133,23 @@
                                                         <button type="submit" class="btn btn-sm btn-success">Accept</button>
                                                     </form>
 
-                                                    <!-- Delete Button -->
+                                                    <!-- Decline Button -->
                                                     <form action="${pageContext.request.contextPath}/manager/request" method="POST" class="d-inline">
                                                         <input type="hidden" name="requestId" value="<%= req.getId() %>"/>
                                                         <input type="hidden" name="action" value="DELETE"> <!-- Delete type -->
                                                         <button type="submit" class="btn btn-sm btn-danger">Decline</button>
                                                     </form>
+                                                    <%
+                                                    } else {
+                                                    %>
+                                                    <!-- View Details Button -->
+                                                    <a href="${pageContext.request.contextPath}/manager/request/details?requestId=<%= req.getId() %>" class="btn btn-sm btn-info">View Details</a>
+                                                    <%
+                                                        }
+                                                    %>
                                                 </td>
+
+
                                             </tr>
                                             <%
                                                 }
