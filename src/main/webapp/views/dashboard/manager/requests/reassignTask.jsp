@@ -1,10 +1,7 @@
 <%@include file="../partials/sessionCheck.jsp"%>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
-<%@ page import="domain.Task" %>
 <%@ page import="domain.User" %>
-<%@ page import="domain.Tag" %>
 <%@ page import="domain.enums.Role" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
@@ -62,62 +59,55 @@
                                 <div class="row">
                                     <div class="col-lg-6">
 
-                                        <form action="${pageContext.request.contextPath}/manager/tasks" method="POST" id="addTaskForm">
+                                        <form action="${pageContext.request.contextPath}/manager/request" method="POST" id="reassignTaskForm">
+                                            <input type="hidden" name="requestId" value="<%= request.getAttribute("requestId") != null ? request.getAttribute("requestId") : "" %>"> <!-- Ensure this is included -->
+                                            <input type="hidden" name="action" value="ACCEPT"> <!-- Action hidden input -->
+
                                             <div class="mb-3">
                                                 <label for="title" class="form-label">Task Title</label>
-                                                <input type="text" id="title" class="form-control" name="title" placeholder="Enter task title" required>
+                                                <input type="text" id="title" class="form-control" name="title" value="<%= request.getAttribute("taskTitle") != null ? request.getAttribute("taskTitle") : "" %>" readonly>
                                             </div>
 
                                             <div class="mb-3">
                                                 <label for="description" class="form-label">Task Description</label>
-                                                <textarea id="description" class="form-control" name="description" placeholder="Enter task description" required></textarea>
+                                                <textarea id="description" class="form-control" name="description" readonly><%= request.getAttribute("taskDescription") != null ? request.getAttribute("taskDescription") : "" %></textarea>
                                             </div>
 
-                                            <div class="mb-3">
-                                                <label for="dueDate" class="form-label">Due Date</label>
-                                                <input type="date" id="dueDate" class="form-control" name="dueDate" required>
-                                            </div>
-
-                                            <input type="hidden" name="creator" value="<%= session.getAttribute("id") %>">
+                                            <input type="hidden" name="taskId" value="<%= request.getAttribute("taskId") != null ? request.getAttribute("taskId") : "" %>">
 
                                             <div class="mb-3">
-                                                <label for="assignedUser" class="form-label">Assigned User</label>
-                                                <select class="form-select" id="assignedUser" name="assignedUser" required>
+                                                <label for="assignedUser" class="form-label">Reassign to User</label>
+                                                <select class="form-select" id="assignedUser" name="newAssignedUser" required>
                                                     <%
                                                         List<User> userList = (List<User>) request.getAttribute("users");
+                                                        User requestUser = (User) request.getAttribute("requestUser");
 
+                                                        if (requestUser != null) {
+                                                    %>
+                                                    <option disabled>Request Created By: <%= requestUser.getUsername() %></option>
+                                                    <%
+                                                        }
+
+                                                        // List the other users, excluding the request user
                                                         if (userList != null && !userList.isEmpty()) {
                                                             for (User user : userList) {
-                                                                if (user.getRole() == Role.USER) {
+                                                                if (user.getRole() == Role.USER && !user.equals(requestUser)) { // Exclude the request user
                                                     %>
                                                     <option value="<%= user.getId() %>"><%= user.getUsername() %></option>
                                                     <%
-                                                                }
                                                             }
+                                                        }
+                                                    } else {
+                                                    %>
+                                                    <option disabled>No users available</option>
+                                                    <%
                                                         }
                                                     %>
                                                 </select>
                                             </div>
 
-
-                                            <div class="mb-3">
-                                                <label for="tags" class="form-label">Tags</label>
-                                                <select multiple class="form-select" id="tags" name="tags">
-                                                    <%
-                                                        List<Tag> tagList = (List<Tag>) request.getAttribute("tags");
-                                                        if (tagList != null && !tagList.isEmpty()) {
-                                                            for (Tag tag : tagList) {
-                                                    %>
-                                                    <option value="<%= tag.getId() %>"><%= tag.getName() %></option>
-                                                    <%
-                                                            }
-                                                        }
-                                                    %>
-                                                </select>
-                                            </div>
-
-                                            <button type="submit" id="submitButton" class="btn btn-primary" name="addTask">Submit</button>
-                                            <a href="tasks" class="btn btn-secondary">Go Back</a>
+                                            <button type="submit" id="submitButton" class="btn btn-primary" name="reassignTask">Reassign Task</button>
+                                            <a href="request" class="btn btn-secondary">Go Back</a>
                                         </form>
 
 

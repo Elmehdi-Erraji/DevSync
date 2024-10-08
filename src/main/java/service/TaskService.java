@@ -37,4 +37,12 @@ public class TaskService {
     public List<Task> findAllTasks() {
         return taskRepository.findAllTasks();
     }
+
+    public List<Task> findTasksAssignedToUser(Long userId) {
+        return taskRepository.findTasksAssignedToUser(userId);
+    }
+
+    public List<Task> findTasksCreatedByUser(Long userId) {
+        return taskRepository.findTasksCreatedByUser(userId);
+    }
 }

@@ -24,7 +24,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role; // MANAGER or USER
 
-    private int dailyTokens = 2; // Default daily tokens
+    private int dailyTokens = 2;
+
+    private int monthlyTokens = 1;
 
     // Relationships
     @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)

@@ -3,6 +3,7 @@ package web.controller.manager;
 import domain.User;
 import domain.enums.Role;
 import service.UserService;
+import util.PasswordUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -77,7 +78,7 @@ public class UserServlet extends HttpServlet {
             User user = new User();
             user.setUsername(username);
             user.setEmail(email);
-            user.setDailyTokens(2); // Default tokens
+            user.setDailyTokens(2);
 
             // Set the role in the User object
             try {
@@ -101,7 +102,7 @@ public class UserServlet extends HttpServlet {
                 }
 
                 // Hash the password using the hashPassword method
-                String hashedPassword = hashPassword(password); // Use the hashing method
+                String hashedPassword = PasswordUtils.hashPassword(password); // Use the hashing method
                 user.setPassword(hashedPassword); // Store the hashed password
 
                 userService.insertUser(user);
@@ -111,29 +112,7 @@ public class UserServlet extends HttpServlet {
         response.sendRedirect("users?status=success"); // Redirect after processing
     }
 
-    // Method to hash password using SHA-256
-    private String hashPassword(String password) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8)); // Use UTF-8 encoding
-            StringBuilder hexString = new StringBuilder();
 
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    // Delete user
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long id = Long.parseLong(request.getParameter("id"));
