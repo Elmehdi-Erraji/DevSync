@@ -5,6 +5,8 @@
     User user = (User) request.getAttribute("user"); // Assuming you set the user object in request scope
 %>
 <html>
+
+
 <head>
     <title><%= user != null ? "Update User" : "Create User" %></title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
