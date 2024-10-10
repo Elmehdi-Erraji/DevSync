@@ -167,28 +167,13 @@ public class RequestServlet extends HttpServlet {
         }
 
         if (req.getRequestType() == RequestType.REJECT) {
-            processDailyToken(user);
+                userService.updateUserTokens((long) user.getId(), user.getDailyTokens() + 1, user.getMonthlyTokens());
         } else if (req.getRequestType() == RequestType.DELETE) {
-            processMonthlyToken(user);
+                userService.updateUserTokens((long) user.getId(), user.getDailyTokens(), user.getMonthlyTokens() + 1);
         }
-
-        // Change the request status to REJECTED instead of deleting the request
-        requestService.updateRequestStatus(req.getId(), RequestStatus.REJECTED); // Pass ID and status separately
+        requestService.updateRequestStatus(req.getId(), RequestStatus.REJECTED);
     }
 
-    private void processDailyToken(User user) {
-        if (user.getDailyTokens() == 0) {
-            userService.updateDailyTokens((long) user.getId(), user.getDailyTokens() + 1); // Return the used daily token
-        }
-        userService.updateDailyTokens((long) user.getId(), user.getDailyTokens() * 2); // Double the daily tokens
-    }
-
-    private void processMonthlyToken(User user) {
-        if (user.getMonthlyTokens() == 0) {
-            userService.updateMonthlyTokens((long) user.getId(), user.getMonthlyTokens() + 1); // Return the used monthly token
-        }
-        userService.updateMonthlyTokens((long) user.getId(), user.getMonthlyTokens() * 2); // Double the monthly tokens
-    }
 
 
     private void processAcceptRequest(Long taskId, Long assignedUserId) {

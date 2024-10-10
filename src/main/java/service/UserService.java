@@ -54,21 +54,4 @@ public class UserService {
         userRepository.insertUser(user);
     }
 
-    public void updateDailyTokens(Long userId, Integer dailyTokens) {
-        User user = userRepository.findUserById(userId);
-        if (dailyTokens != null) {
-            user.setDailyTokens(dailyTokens);
-            userRepository.insertUser(user); // Save the updated user
-        }
-    }
-
-    // New method to update only monthly tokens
-    public void updateMonthlyTokens(Long userId, Integer monthlyTokens) {
-        User user = userRepository.findUserById(userId);
-        if (monthlyTokens != null) {
-            user.setMonthlyTokens(monthlyTokens);
-            userRepository.insertUser(user); // Save the updated user
-        }
-    }
-
 }

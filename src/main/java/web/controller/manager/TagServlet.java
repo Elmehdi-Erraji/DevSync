@@ -10,6 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.ConstraintViolation;
 
 @WebServlet("/manager/tags")
 public class TagServlet extends HttpServlet {
@@ -49,24 +55,36 @@ public class TagServlet extends HttpServlet {
         String method = request.getParameter("_method");
         String id = request.getParameter("id");
 
-        // Handle delete request
         if ("delete".equalsIgnoreCase(method)) {
             if (id != null && !id.isEmpty()) {
                 tagService.deleteTag(Long.parseLong(id));
             }
         } else {
-            // Common fields for both create and update
+            // Get the name parameter from the request
             String name = request.getParameter("name");
 
-            // Check for null values
-            if (name == null || name.isEmpty()) {
-                throw new ServletException("Tag name is required");
-            }
-
+            // Create a new Tag object and set its name
             Tag tag = new Tag();
             tag.setName(name);
 
-            // Handle create and update operations
+            // Validate the Tag object using Jakarta Validation
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            Validator validator = factory.getValidator();
+            Set<ConstraintViolation<Tag>> violations = validator.validate(tag);
+
+            // Check if there are any validation violations
+            if (!violations.isEmpty()) {
+                StringBuilder errorMessages = new StringBuilder();
+                for (ConstraintViolation<Tag> violation : violations) {
+                    errorMessages.append(violation.getMessage()).append("<br>");
+                }
+                // Send validation error messages back to the form
+                request.setAttribute("errorMessages", errorMessages.toString());
+                request.getRequestDispatcher(request.getContextPath() + "/tags/create.jsp").forward(request, response);
+                return; // Stop further processing
+            }
+
+            // Handle create and update operations after validation passes
             if (id != null && !id.isEmpty()) {
                 tag.setId(Long.parseLong(id));
                 tagService.updateTag(tag);
@@ -76,5 +94,4 @@ public class TagServlet extends HttpServlet {
         }
 
         response.sendRedirect("tags?status=success"); // Redirect after processing
-    }
-}
+    }}

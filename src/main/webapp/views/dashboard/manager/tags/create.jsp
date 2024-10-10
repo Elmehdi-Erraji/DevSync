@@ -51,11 +51,21 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-lg-6">
+                                        <%
+                                            String errorMessages = (String) request.getAttribute("errorMessages");
+                                            if (errorMessages != null && !errorMessages.isEmpty()) {
+                                        %>
+                                        <div style="color:red;">
+                                            <%= errorMessages %>
+                                        </div>
+                                        <%
+                                            }
+                                        %>
 
                                         <form action="${pageContext.request.contextPath}/manager/tags" method="POST" id="addTagForm">
                                             <div class="mb-3">
                                                 <label for="name" class="form-label">Tag Name</label>
-                                                <input type="text" id="name" class="form-control" name="name" placeholder="Enter tag name" required>
+                                                <input type="text" id="name" class="form-control" name="name" placeholder="Enter tag name" >
                                             </div>
 
                                             <button type="submit" id="submitButton" class="btn btn-primary" name="addTag">Submit</button>

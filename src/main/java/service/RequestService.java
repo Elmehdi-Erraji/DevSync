@@ -28,7 +28,6 @@ public class RequestService {
         return requestRepository.save(request);
     }
 
-    // Reject an existing request
     public Request rejectRequest(Long requestId) {
         Optional<Request> optionalRequest = requestRepository.findById(requestId);
         if (optionalRequest.isPresent()) {
