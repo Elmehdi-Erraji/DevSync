@@ -20,13 +20,25 @@ import jakarta.validation.ConstraintViolation;
 @WebServlet("/manager/tags")
 public class TagServlet extends HttpServlet {
     private TagService tagService;
+    private ValidatorFactory validatorFactory;
+    private Validator validator;
 
     @Override
     public void init() throws ServletException {
         try {
             tagService = new TagService();
+            // Initialize ValidatorFactory and Validator once
+            validatorFactory = Validation.buildDefaultValidatorFactory();
+            validator = validatorFactory.getValidator();
         } catch (Exception e) {
             throw new ServletException("Failed to initialize TagServlet", e);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (validatorFactory != null) {
+            validatorFactory.close();
         }
     }
 
@@ -68,8 +80,6 @@ public class TagServlet extends HttpServlet {
             tag.setName(name);
 
             // Validate the Tag object using Jakarta Validation
-            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-            Validator validator = factory.getValidator();
             Set<ConstraintViolation<Tag>> violations = validator.validate(tag);
 
             // Check if there are any validation violations
@@ -80,7 +90,7 @@ public class TagServlet extends HttpServlet {
                 }
                 // Send validation error messages back to the form
                 request.setAttribute("errorMessages", errorMessages.toString());
-                request.getRequestDispatcher(request.getContextPath() + "/tags/create.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/dashboard/manager/tags/create.jsp").forward(request, response);
                 return; // Stop further processing
             }
 
@@ -93,5 +103,6 @@ public class TagServlet extends HttpServlet {
             }
         }
 
-        response.sendRedirect("tags?status=success"); // Redirect after processing
-    }}
+        response.sendRedirect(request.getContextPath() + "/manager/tags?status=success"); // Redirect after processing
+    }
+}
