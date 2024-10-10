@@ -55,21 +55,32 @@
                                     <h4 class="fs-20">Sign In</h4>
                                     <p class="text-muted mb-3">Enter your email address and password to access account.</p>
 
-                                    <!-- Login Form -->
+                                    <%
+                                        // Retrieve the error message from the request attribute
+                                        String errorMessages = (String) request.getAttribute("errorMessage");
+                                        if (errorMessages != null && !errorMessages.isEmpty()) {
+                                    %>
+                                    <div style="color:red;">
+                                        <%= errorMessages %>
+                                    </div>
+                                    <%
+                                        }
+                                    %>
                                     <form method="POST" action="login">
                                         <div class="mb-3">
                                             <label for="email" class="form-label">Email address</label>
-                                            <input class="form-control" type="email" name="email" id="email" placeholder="Enter your email" required>
+                                            <input class="form-control" type="email" name="email" id="email" placeholder="Enter your email" >
                                         </div>
                                         <div class="mb-3">
-                                            <a href="${pageContext.request.contextPath}/password/request" class="text-muted float-end"><small>Forgot your password?</small></a>
                                             <label for="password" class="form-label">Password</label>
-                                            <input class="form-control" type="password" name="password" id="password" placeholder="Enter your password" required>
+                                            <input class="form-control" type="password" name="password" id="password" placeholder="Enter your password" >
                                         </div>
                                         <div class="mb-0 text-start">
                                             <button class="btn btn-soft-primary w-100" type="submit"><i class="ri-login-circle-fill me-1"></i> <span class="fw-bold">Log In</span> </button>
                                         </div>
                                     </form>
+
+
                                     <!-- End Login Form -->
                                 </div>
                             </div>
@@ -88,9 +99,8 @@
         <!-- end row -->
     </div>
 
-    <!-- end container -->
 </div>
-<%-- Check if there is an error message and display it --%>
+
 <%
     if (errorMessage != null) {
 %>
