@@ -30,7 +30,6 @@ public class UserServlet extends HttpServlet {
         }
     }
 
-    // Display all users
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
