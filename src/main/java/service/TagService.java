@@ -55,11 +55,7 @@ public class TagService {
     }
 
     public List<Tag> findAllTags() {
-        List<Tag> tags = tagRepository.findAll();
-        if (tags.isEmpty()) {
-            throw new TagException("No tags found.");
-        }
-        return tags;
+        return tagRepository.findAll();
     }
 
     private void validateTag(Tag tag) {

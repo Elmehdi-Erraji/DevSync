@@ -56,9 +56,6 @@ public class TaskService {
 
     public List<Task> findAllTasks() {
         List<Task> tasks = taskRepository.findAllTasks();
-        if (tasks.isEmpty()) {
-            throw new TaskException("No tasks found.");
-        }
         return tasks;
     }
 

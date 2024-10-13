@@ -63,6 +63,18 @@
                                     <div class="col-lg-6">
 
                                         <form action="${pageContext.request.contextPath}/manager/tasks" method="POST" id="addTaskForm">
+
+                                            <%
+                                                String errorMessage = (String) request.getAttribute("error");
+                                                if (errorMessage != null) {
+                                            %>
+                                            <div class="alert alert-danger" role="alert">
+                                                <%= errorMessage %>
+                                            </div>
+                                            <%
+                                                }
+                                            %>
+
                                             <div class="mb-3">
                                                 <label for="title" class="form-label">Task Title</label>
                                                 <input type="text" id="title" class="form-control" name="title" placeholder="Enter task title" required>

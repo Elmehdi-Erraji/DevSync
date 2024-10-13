@@ -82,6 +82,11 @@
                                             </div>
 
                                             <div class="mb-3">
+                                                <label for="startDate" class="form-label">Start Date</label>
+                                                <input type="date" id="startDate" class="form-control" name="startDate" value="<%= task.getStartDate() %>" required>
+                                            </div>
+
+                                            <div class="mb-3">
                                                 <label for="dueDate" class="form-label">Due Date</label>
                                                 <input type="date" id="dueDate" class="form-control" name="dueDate" value="<%= task.getDueDate() %>" required>
                                             </div>
