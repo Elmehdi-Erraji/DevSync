@@ -72,10 +72,15 @@
                                                 <label for="description" class="form-label">Task Description</label>
                                                 <textarea id="description" class="form-control" name="description" placeholder="Enter task description" required></textarea>
                                             </div>
+                                            <div class="mb-3">
+                                                <label for="startDate" class="form-label">Start Date</label>
+                                                <input type="date" id="startDate" class="form-control" name="startDate" min="<%= java.time.LocalDate.now().plusDays(3) %>" required>
+                                            </div>
+
 
                                             <div class="mb-3">
                                                 <label for="dueDate" class="form-label">Due Date</label>
-                                                <input type="date" id="dueDate" class="form-control" name="dueDate" required>
+                                                <input type="date" id="dueDate" class="form-control" name="dueDate" min="<%= java.time.LocalDate.now().plusDays(4) %>"required>
                                             </div>
 
                                             <input type="hidden" name="creator" value="<%= session.getAttribute("id") %>">

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet("/manager/tasks")
@@ -76,17 +77,20 @@ public class TaskServlet extends HttpServlet {
         } else {
             String title = request.getParameter("title");
             String description = request.getParameter("description");
+            String startDateParam = request.getParameter("startDate");
             String dueDate = request.getParameter("dueDate");
+
             String statusParam = "NEW";
             Long creatorId = Long.parseLong(request.getParameter("creator"));
             Long assignedUserId = Long.parseLong(request.getParameter("assignedUser"));
             String[] tagIds = request.getParameterValues("tags");
-
+            LocalDate startDate = LocalDate.parse(startDateParam);
 
             Task task = new Task();
             task.setTitle(title);
             task.setDescription(description);
             task.setDueDate(dueDate);
+            task.setStartDate(startDate);
 
             if (statusParam != null) {
                 TaskStatus status = TaskStatus.valueOf(statusParam.toUpperCase());
