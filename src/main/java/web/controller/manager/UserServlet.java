@@ -51,25 +51,17 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String method = request.getParameter("_method");
-        String id = request.getParameter("id"); // For update operations
+        String id = request.getParameter("id");
 
-        // Handle delete request
         if ("delete".equalsIgnoreCase(method)) {
             if (id != null && !id.isEmpty()) {
                 userService.deleteUser(Long.parseLong(id));
             }
         } else {
-            // Common fields for both create and update
             String username = request.getParameter("username");
             String email = request.getParameter("email");
-            String roleParam = request.getParameter("role"); // Get the role from the request
+            String roleParam = request.getParameter("role");
 
-            // Debugging logs
-            System.out.println("Username: " + username);
-            System.out.println("Email: " + email);
-            System.out.println("Role: " + roleParam); // Log the role for debugging
-
-            // Check for null values
             if (username == null || email == null || roleParam == null) {
                 throw new ServletException("Required form fields are missing");
             }
@@ -79,7 +71,6 @@ public class UserServlet extends HttpServlet {
             user.setEmail(email);
             user.setDailyTokens(2);
 
-            // Set the role in the User object
             try {
                 Role role = Role.valueOf(roleParam.toUpperCase());
                 user.setRole(role);
@@ -87,28 +78,23 @@ public class UserServlet extends HttpServlet {
                 throw new ServletException("Invalid role specified");
             }
 
-            // Handle create and update operations
             if (id != null && !id.isEmpty()) {
-                // Update operation - do not change the password
                 user.setId((int) Long.parseLong(id));
-                // No need to set the password for update, just update the other fields
                 userService.updateUser(user);
             } else {
-                // Create operation
                 String password = request.getParameter("password");
                 if (password == null || password.isEmpty()) {
                     throw new ServletException("Password is required for creating a user");
                 }
 
-                // Hash the password using the hashPassword method
-                String hashedPassword = PasswordUtils.hashPassword(password); // Use the hashing method
-                user.setPassword(hashedPassword); // Store the hashed password
+                String hashedPassword = PasswordUtils.hashPassword(password);
+                user.setPassword(hashedPassword);
 
                 userService.insertUser(user);
             }
         }
 
-        response.sendRedirect("users?status=success"); // Redirect after processing
+        response.sendRedirect("users?status=success");
     }
 
 

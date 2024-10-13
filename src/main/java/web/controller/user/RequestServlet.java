@@ -40,7 +40,7 @@ public class RequestServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long taskId = Long.parseLong(request.getParameter("taskId"));
         Long userId = Long.parseLong(request.getParameter("user_id"));
-        String requestType = request.getParameter("requestType"); // Get request type
+        String requestType = request.getParameter("requestType");
 
         Task task = taskService.findTaskById(taskId);
         User user = userService.findUserById(userId);
@@ -77,13 +77,11 @@ public class RequestServlet extends HttpServlet {
 
             Integer monthlyTokens = (Integer) request.getSession().getAttribute("monthlyTokens");
             if (monthlyTokens > 0) {
-                requestService.saveRequest(requestToSave); // Save request
+                requestService.saveRequest(requestToSave);
 
-                // Update the session and database tokens
                 request.getSession().setAttribute("monthlyTokens", monthlyTokens - 1);
                 userService.updateUserTokens(userId, user.getDailyTokens(), monthlyTokens - 1); // Update in DB
             } else {
-                // Handle insufficient tokens
                 request.setAttribute("errorMessage", "Insufficient monthly tokens to delete the request.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import domain.enums.TaskStatus;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class Task {
 
     private String title;
     private String description;
+
+    private LocalDate startDate;
     private String dueDate;
 
     @Enumerated(EnumType.STRING)

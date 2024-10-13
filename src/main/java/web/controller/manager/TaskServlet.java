@@ -88,23 +88,20 @@ public class TaskServlet extends HttpServlet {
             task.setDescription(description);
             task.setDueDate(dueDate);
 
-            // Set the status
             if (statusParam != null) {
                 TaskStatus status = TaskStatus.valueOf(statusParam.toUpperCase());
                 task.setStatus(status);
             }
 
-            // Set the creator and assigned user
             User creator = userService.findUserById(creatorId);
             User assignedUser = userService.findUserById(assignedUserId);
             task.setCreator(creator);
             task.setAssignedUser(assignedUser);
 
-            // Set tags
             if (tagIds != null) {
                 for (String tagId : tagIds) {
                     Tag tag = tagService.findTagById(Long.parseLong(tagId));
-                    task.getTags().add(tag); // This should work now
+                    task.getTags().add(tag);
                 }
             } else {
                 System.out.println("No tags selected.");
@@ -117,8 +114,6 @@ public class TaskServlet extends HttpServlet {
                 taskService.insertTask(task);
             }
         }
-
-
         
         response.sendRedirect("tasks?status=success");
     }

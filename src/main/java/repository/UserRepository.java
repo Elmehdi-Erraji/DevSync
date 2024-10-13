@@ -73,9 +73,8 @@ public class UserRepository {
         try {
             TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
             query.setParameter("email", email);
-            return query.getSingleResult();  // Return the user if found
+            return query.getSingleResult();
         } catch (Exception e) {
-            // If no user is found, return null
             return null;
         }
     }
@@ -88,12 +87,12 @@ public class UserRepository {
             if (user != null) {
                 user.setDailyTokens(dailyTokens);
                 user.setMonthlyTokens(monthlyTokens);
-                entityManager.merge(user); // Update the user entity
+                entityManager.merge(user);
             }
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
-                transaction.rollback(); // Rollback on error
+                transaction.rollback();
             }
             throw new RuntimeException("Failed to update user tokens: " + e.getMessage(), e);
         }

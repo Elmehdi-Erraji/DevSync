@@ -1,9 +1,10 @@
 package service;
 
+import domain.Task;
+import exception.TaskException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import domain.Task;
 import repository.TaskRepository;
 
 import java.util.List;
@@ -19,30 +20,84 @@ public class TaskService {
     }
 
     public void insertTask(Task task) {
+        validateTask(task);
         taskRepository.insertTask(task);
     }
 
     public void updateTask(Task task) {
+        if (task.getId() == null) {
+            throw new TaskException("Task ID cannot be null when updating a task.");
+        }
+        validateTask(task);
         taskRepository.updateTask(task);
     }
 
     public void deleteTask(Long taskId) {
+        if (taskId == null) {
+            throw new TaskException("Task ID cannot be null.");
+        }
+        Task task = taskRepository.findTaskById(taskId);
+        if (task == null) {
+            throw new TaskException("Task not found with ID: " + taskId);
+        }
         taskRepository.deleteTask(taskId);
     }
 
     public Task findTaskById(Long taskId) {
-        return taskRepository.findTaskById(taskId);
+        if (taskId == null) {
+            throw new TaskException("Task ID cannot be null.");
+        }
+        Task task = taskRepository.findTaskById(taskId);
+        if (task == null) {
+            throw new TaskException("Task not found with ID: " + taskId);
+        }
+        return task;
     }
 
     public List<Task> findAllTasks() {
-        return taskRepository.findAllTasks();
+        List<Task> tasks = taskRepository.findAllTasks();
+        if (tasks.isEmpty()) {
+            throw new TaskException("No tasks found.");
+        }
+        return tasks;
     }
 
     public List<Task> findTasksAssignedToUser(Long userId) {
-        return taskRepository.findTasksAssignedToUser(userId);
+        validateUserId(userId);
+        List<Task> tasks = taskRepository.findTasksAssignedToUser(userId);
+        if (tasks.isEmpty()) {
+            throw new TaskException("No tasks assigned to user with ID: " + userId);
+        }
+        return tasks;
     }
 
     public List<Task> findTasksCreatedByUser(Long userId) {
-        return taskRepository.findTasksCreatedByUser(userId);
+        validateUserId(userId);
+        List<Task> tasks = taskRepository.findTasksCreatedByUser(userId);
+        if (tasks.isEmpty()) {
+            throw new TaskException("No tasks created by user with ID: " + userId);
+        }
+        return tasks;
+    }
+
+    private void validateTask(Task task) {
+        if (task == null) {
+            throw new TaskException("Task cannot be null.");
+        }
+        if (task.getTitle() == null || task.getTitle().trim().isEmpty()) {
+            throw new TaskException("Task title cannot be null or empty.");
+        }
+        if (task.getTitle().length() > 100) {
+            throw new TaskException("Task title cannot exceed 100 characters.");
+        }
+        if (task.getDescription() != null && task.getDescription().length() > 500) {
+            throw new TaskException("Task description cannot exceed 500 characters.");
+        }
+    }
+
+    private void validateUserId(Long userId) {
+        if (userId == null) {
+            throw new TaskException("User ID cannot be null.");
+        }
     }
 }

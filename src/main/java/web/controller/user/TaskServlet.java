@@ -38,7 +38,6 @@ public class TaskServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
 
-        // Check if user is logged in
         if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -47,9 +46,7 @@ public class TaskServlet extends HttpServlet {
         User loggedInUser = (User) session.getAttribute("user");
         String action = request.getParameter("action");
 
-        // Handle different actions
         if (action == null) {
-            // Display assigned and self-created tasks
             List<Task> assignedTasks = taskService.findTasksAssignedToUser((long) loggedInUser.getId());
             List<Task> selfCreatedTasks = taskService.findTasksCreatedByUser((long) loggedInUser.getId());
 
@@ -82,12 +79,10 @@ public class TaskServlet extends HttpServlet {
         String id = request.getParameter("id");
 
         if ("delete".equalsIgnoreCase(method)) {
-            // Handle task deletion
             if (id != null && !id.isEmpty()) {
                 taskService.deleteTask(Long.parseLong(id));
             }
         } else if ("statusUpdate".equalsIgnoreCase(method)) {
-            // Handle status update
             if (id != null && !id.isEmpty()) {
                 Task task = taskService.findTaskById(Long.parseLong(id));
                 String statusParam = request.getParameter("status");
@@ -98,20 +93,17 @@ public class TaskServlet extends HttpServlet {
                 }
             }
         } else {
-            // Handle task creation or update
             if (id != null && !id.isEmpty()) {
-                // Update existing task
                 Long taskId = Long.parseLong(id);
                 Task task = taskService.findTaskById(taskId);
 
                 updateTaskFromRequest(task, request);
                 taskService.updateTask(task);
             } else {
-                // Create new task
                 Task newTask = new Task();
                 updateTaskFromRequest(newTask, request);
-                newTask.setStatus(TaskStatus.NEW); // Default status for new tasks
-                taskService.insertTask(newTask); // Save new task
+                newTask.setStatus(TaskStatus.NEW);
+                taskService.insertTask(newTask);
             }
         }
 
@@ -131,9 +123,8 @@ public class TaskServlet extends HttpServlet {
         task.setDescription(description);
         task.setDueDate(dueDate);
 
-        // Set the status if provided
         if (statusParam != null && !statusParam.isEmpty()) {
-            TaskStatus status = TaskStatus.valueOf(statusParam.toUpperCase()); // Convert to enum
+            TaskStatus status = TaskStatus.valueOf(statusParam.toUpperCase());
             task.setStatus(status);
         }
 
