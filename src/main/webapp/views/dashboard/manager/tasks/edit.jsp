@@ -90,34 +90,21 @@
                                                 <label for="dueDate" class="form-label">Due Date</label>
                                                 <input type="date" id="dueDate" class="form-control" name="dueDate" value="<%= task.getDueDate() %>" required>
                                             </div>
+                                            <input type="hidden" name="creator" value="<%= session.getAttribute("id") %>">
 
-                                            <div class="mb-3">
-                                                <label for="creator" class="form-label">Creator</label>
-                                                <select class="form-select" id="creator" name="creator" required>
-                                                    <%
-                                                        List<User> userList = (List<User>) request.getAttribute("users");
-                                                        if (userList != null && !userList.isEmpty()) {
-                                                            for (User user : userList) {
-                                                                if (user.getRole() == Role.USER) { // Check for USER role
-                                                    %>
-                                                    <option value="<%= user.getId() %>" <%= task.getCreator().getId() == user.getId() ? "selected" : "" %>><%= user.getUsername() %></option>
-                                                    <%
-                                                                }
-                                                            }
-                                                        }
-                                                    %>
-                                                </select>
-                                            </div>
 
                                             <div class="mb-3">
                                                 <label for="assignedUser" class="form-label">Assigned User</label>
                                                 <select class="form-select" id="assignedUser" name="assignedUser" required>
                                                     <%
+                                                        List<User> userList = (List<User>) request.getAttribute("users");
                                                         if (userList != null && !userList.isEmpty()) {
                                                             for (User user : userList) {
+                                                                if (user.getRole() == Role.USER) {
                                                     %>
-                                                    <option value="<%= user.getId() %>" <%= task.getAssignedUser().getId() == user.getId() ? "selected" : "" %>><%= user.getUsername() %></option>
+                                                    <option value="<%= user.getId() %>" <%= task.getCreator().getId() == user.getId() ? "selected" : "" %>><%= user.getUsername() %></option>
                                                     <%
+                                                                }
                                                             }
                                                         }
                                                     %>

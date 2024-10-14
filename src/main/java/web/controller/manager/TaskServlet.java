@@ -81,6 +81,7 @@ public class TaskServlet extends HttpServlet {
             String startDateParam = request.getParameter("startDate");
             String dueDateParam = request.getParameter("dueDate");
 
+
             Long creatorId = Long.parseLong(request.getParameter("creator"));
             Long assignedUserId = Long.parseLong(request.getParameter("assignedUser"));
             String[] tagIds = request.getParameterValues("tags");
@@ -142,6 +143,9 @@ public class TaskServlet extends HttpServlet {
             task.setDescription(description);
             task.setStartDate(startDate);
             task.setDueDate(String.valueOf(dueDate));
+            
+            task.setStatus(TaskStatus.NEW);
+
 
             User creator = userService.findUserById(creatorId);
             User assignedUser = userService.findUserById(assignedUserId);
@@ -154,6 +158,7 @@ public class TaskServlet extends HttpServlet {
                     task.getTags().add(tag);
                 }
             }
+
 
             if (id != null && !id.isEmpty()) {
                 task.setId(Long.parseLong(id));

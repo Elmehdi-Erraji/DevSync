@@ -61,20 +61,12 @@ public class TaskService {
 
     public List<Task> findTasksAssignedToUser(Long userId) {
         validateUserId(userId);
-        List<Task> tasks = taskRepository.findTasksAssignedToUser(userId);
-        if (tasks.isEmpty()) {
-            throw new TaskException("No tasks assigned to user with ID: " + userId);
-        }
-        return tasks;
+        return taskRepository.findTasksAssignedToUser(userId);
     }
 
     public List<Task> findTasksCreatedByUser(Long userId) {
         validateUserId(userId);
-        List<Task> tasks = taskRepository.findTasksCreatedByUser(userId);
-        if (tasks.isEmpty()) {
-            throw new TaskException("No tasks created by user with ID: " + userId);
-        }
-        return tasks;
+        return taskRepository.findTasksCreatedByUser(userId);
     }
 
     private void validateTask(Task task) {
