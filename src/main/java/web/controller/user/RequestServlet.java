@@ -43,7 +43,6 @@ public class RequestServlet extends HttpServlet {
         Long userId = Long.parseLong(request.getParameter("user_id"));
         String requestType = request.getParameter("requestType");
 
-        // Retrieve task and user
         Task task = taskService.findTaskById(taskId);
         User user = userService.findUserById(userId);
 
@@ -59,32 +58,29 @@ public class RequestServlet extends HttpServlet {
         TokenLog tokenLog = new TokenLog();
         tokenLog.setTokensUsed(1);
         tokenLog.setAction(requestType);
-        tokenLog.setUsername(user.getUsername()); // User who performed the action
-        tokenLog.setTaskId(taskId); // Affected task ID
+        tokenLog.setUsername(user.getUsername());
+        tokenLog.setTaskId(taskId);
         tokenLog.setDateUsed(LocalDateTime.now());
 
         if ("REJECT".equalsIgnoreCase(requestType)) {
             Integer dailyTokens = (Integer) request.getSession().getAttribute("dailyTokens");
 
             if (dailyTokens != null && dailyTokens > 0) {
-                // Save the reject request
                 Request rejectRequest = new Request();
                 rejectRequest.setTask(task);
                 rejectRequest.setUser(user);
                 rejectRequest.setRequestType(RequestType.REJECT);
                 requestService.saveRequest(rejectRequest);
 
-                // Log the previous and new assigned users
                 tokenLog.setPreviousAssignedUser(task.getAssignedUser().getUsername());
-                tokenLog.setNewAssignedUser("New user to be assigned"); // Placeholder, update later
-                tokenLog.setManagerApproved(null); // Manager approval to be updated later
+                tokenLog.setNewAssignedUser("");
+                tokenLog.setManagerApproved(null);
 
-                // Update tokens and log the usage
+
                 request.getSession().setAttribute("dailyTokens", dailyTokens - 1);
                 userService.updateUserTokens(userId, dailyTokens - 1, user.getMonthlyTokens());
-                tokenLogService.saveTokenLog(tokenLog); // Save the log
+                tokenLogService.saveTokenLog(tokenLog);
             } else {
-                // Insufficient tokens handling
                 request.setAttribute("errorMessage", "Insufficient daily tokens to reject the task.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
