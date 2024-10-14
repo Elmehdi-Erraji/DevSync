@@ -17,11 +17,25 @@ public class TokenLog {
 
     private int tokensUsed;
     private String action;
+    private String username;
+    private Long taskId;
+    private String previousAssignedUser;
+    private String newAssignedUser;
+    private String managerApproved;
     private LocalDateTime dateUsed;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-
+    @Override
+    public String toString() {
+        return "TokenLog{" +
+                "id=" + id +
+                ", tokensUsed=" + tokensUsed +
+                ", action='" + action + '\'' +
+                ", username='" + username + '\'' +
+                ", taskId=" + taskId +
+                ", previousAssignedUser='" + previousAssignedUser + '\'' +
+                ", newAssignedUser='" + newAssignedUser + '\'' +
+                ", managerApproved='" + managerApproved + '\'' +
+                ", dateUsed=" + dateUsed +
+                '}';
+    }
 }

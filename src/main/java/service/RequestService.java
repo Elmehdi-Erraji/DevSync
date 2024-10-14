@@ -46,11 +46,8 @@ public class RequestService {
     }
 
     public List<Request> getAllRequests() {
-        List<Request> requests = requestRepository.findAll();
-        if (requests.isEmpty()) {
-            throw new RequestException("No requests found.");
-        }
-        return requests;
+
+        return requestRepository.findAll();
     }
 
     public void deleteRequest(Long requestId) {

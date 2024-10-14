@@ -143,7 +143,7 @@ public class TaskServlet extends HttpServlet {
             task.setDescription(description);
             task.setStartDate(startDate);
             task.setDueDate(String.valueOf(dueDate));
-            
+
             task.setStatus(TaskStatus.NEW);
 
 

@@ -2,13 +2,11 @@ package web.controller.user;
 
 import domain.Request;
 import domain.Task;
+import domain.TokenLog;
 import domain.User;
 import domain.enums.RequestStatus;
 import domain.enums.RequestType;
-import service.RequestService;
-import service.TagService;
-import service.TaskService;
-import service.UserService;
+import service.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @WebServlet("/request")
 public class RequestServlet extends HttpServlet {
@@ -23,13 +22,15 @@ public class RequestServlet extends HttpServlet {
     private RequestService requestService;
     private TaskService taskService;
     private UserService userService;
+    private TokenLogService tokenLogService;
 
     @Override
     public void init() throws ServletException {
         try {
-            requestService = new RequestService(); // Inject your request service
-            taskService = new TaskService();       // Inject your task service
-            userService = new UserService();       // Inject your user service
+            requestService = new RequestService();
+            taskService = new TaskService();
+            userService = new UserService();
+            tokenLogService = new TokenLogService();
         } catch (Exception e) {
             throw new ServletException("Failed to initialize RequestServlet", e);
         }
@@ -42,6 +43,7 @@ public class RequestServlet extends HttpServlet {
         Long userId = Long.parseLong(request.getParameter("user_id"));
         String requestType = request.getParameter("requestType");
 
+        // Retrieve task and user
         Task task = taskService.findTaskById(taskId);
         User user = userService.findUserById(userId);
 
@@ -53,41 +55,63 @@ public class RequestServlet extends HttpServlet {
             throw new ServletException("User not found with id: " + userId);
         }
 
-        Request requestToSave = new Request();
-        requestToSave.setTask(task);
-        requestToSave.setUser(user);
+        // Initialize TokenLog
+        TokenLog tokenLog = new TokenLog();
+        tokenLog.setTokensUsed(1);
+        tokenLog.setAction(requestType);
+        tokenLog.setUsername(user.getUsername()); // User who performed the action
+        tokenLog.setTaskId(taskId); // Affected task ID
+        tokenLog.setDateUsed(LocalDateTime.now());
 
         if ("REJECT".equalsIgnoreCase(requestType)) {
-            requestToSave.setRequestType(RequestType.REJECT);
-
             Integer dailyTokens = (Integer) request.getSession().getAttribute("dailyTokens");
-            if (dailyTokens != null && dailyTokens > 0) {
-                requestService.saveRequest(requestToSave);
 
+            if (dailyTokens != null && dailyTokens > 0) {
+                // Save the reject request
+                Request rejectRequest = new Request();
+                rejectRequest.setTask(task);
+                rejectRequest.setUser(user);
+                rejectRequest.setRequestType(RequestType.REJECT);
+                requestService.saveRequest(rejectRequest);
+
+                // Log the previous and new assigned users
+                tokenLog.setPreviousAssignedUser(task.getAssignedUser().getUsername());
+                tokenLog.setNewAssignedUser("New user to be assigned"); // Placeholder, update later
+                tokenLog.setManagerApproved(null); // Manager approval to be updated later
+
+                // Update tokens and log the usage
                 request.getSession().setAttribute("dailyTokens", dailyTokens - 1);
-                userService.updateUserTokens(userId, dailyTokens - 1, user.getMonthlyTokens()); // Update in DB
+                userService.updateUserTokens(userId, dailyTokens - 1, user.getMonthlyTokens());
+                tokenLogService.saveTokenLog(tokenLog); // Save the log
             } else {
-                // Handle insufficient tokens
-                request.setAttribute("errorMessage", "Insufficient daily tokens to reject the request.");
+                // Insufficient tokens handling
+                request.setAttribute("errorMessage", "Insufficient daily tokens to reject the task.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
         } else if ("DELETE".equalsIgnoreCase(requestType)) {
-            requestToSave.setRequestType(RequestType.DELETE);
-
             Integer monthlyTokens = (Integer) request.getSession().getAttribute("monthlyTokens");
-            if (monthlyTokens > 0) {
-                requestService.saveRequest(requestToSave);
 
+            if (monthlyTokens != null && monthlyTokens > 0) {
+                // Log the token usage for delete
+                tokenLog.setPreviousAssignedUser(null); // Not relevant for delete
+                tokenLog.setNewAssignedUser(null); // Not relevant for delete
+                tokenLog.setManagerApproved(null); // No manager approval needed for delete
+
+                // Update tokens and delete the task
                 request.getSession().setAttribute("monthlyTokens", monthlyTokens - 1);
-                userService.updateUserTokens(userId, user.getDailyTokens(), monthlyTokens - 1); // Update in DB
+                userService.updateUserTokens(userId, user.getDailyTokens(), monthlyTokens - 1);
+                tokenLogService.saveTokenLog(tokenLog); // Save the log
+                taskService.deleteTask(taskId); // Delete the task
             } else {
-                request.setAttribute("errorMessage", "Insufficient monthly tokens to delete the request.");
+                // Insufficient tokens handling
+                request.setAttribute("errorMessage", "Insufficient monthly tokens to delete the task.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
         }
 
+        // Redirect to the tasks page after the operation
         response.sendRedirect("/demo2/user/tasks");
     }
 

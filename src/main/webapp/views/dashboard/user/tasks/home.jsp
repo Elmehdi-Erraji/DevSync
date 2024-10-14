@@ -139,6 +139,7 @@
                                                             <!-- Edit Button -->
                                                             <a href="tasks?action=statusUpdate&id=<%= task.getId() %>" class="btn btn-sm btn-primary">Edit</a>
 
+                                                            <%--Reject button--%>
                                                             <%
                                                                 // Check if the task is NOT refused to display the Reject button
                                                                 if (!task.isRefused()) {

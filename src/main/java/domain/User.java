@@ -46,8 +46,7 @@ public class User {
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     private List<Task> createdTasks;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<TokenLog> tokenLogs;
+
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Request> requests;

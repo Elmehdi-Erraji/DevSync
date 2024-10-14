@@ -29,6 +29,7 @@ public class Task {
     private boolean isRefused = false;
 
 
+
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private User creator; // The user or manager who created the task
