@@ -7,3 +7,5 @@ SELECT cron.schedule('0 */12 * * *',$$UPDATE task SET status = 'UNCOMPLETED' WHE
 
 -- Verify the cron job has been created
 SELECT * FROM cron.job;
+
+
