@@ -51,18 +51,18 @@
 
                 <div class="row">
                     <div class="col-xxl-3 col-sm-6">
-                        <div class="card widget-flat text-bg-primary">
+                        <div class="card widget-flat text-bg-info"> <!-- Changed color to 'info' -->
                             <div class="card-body">
                                 <div class="float-end">
-                                    <i class="ri-group-2-line widget-icon"></i>
+                                    <i class="ri-price-tag-2-line widget-icon" style="font-size: 2rem;"></i> <!-- Tag icon -->
                                 </div>
-                                <h6 class="text-uppercase mt-0" title="Users">Tags</h6>
-                                <h2 class="my-2">5</h2>
+                                <h6 class="text-uppercase mt-0" title="Tags">Tags</h6>
+                                <h2 class="my-2"><%= request.getAttribute("tagsCount") %></h2> <!-- Display total tags -->
                             </div>
                         </div>
                     </div>
-
                 </div>
+
 
                 <div class="row">
                     <div class="col-12">
@@ -129,6 +129,8 @@
                         </div>
                     </div>
                 </div>
+
+
             </div>
 
 

@@ -45,7 +45,11 @@ public class RequestServlet extends HttpServlet {
             handleAcceptRedirect(request, response);
         } else {
             List<Request> requestList = requestService.getAllRequests();
+            int requestsCount = requestList.size();
+
+            request.setAttribute("requestsCount", requestsCount);
             request.setAttribute("requests", requestList);
+
             request.getRequestDispatcher("/views/dashboard/manager/requests/home.jsp").forward(request, response);
         }
     }
