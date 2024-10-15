@@ -4,6 +4,7 @@ import domain.Task;
 import domain.Tag;
 import domain.User;
 import domain.enums.TaskStatus;
+import org.hibernate.dialect.unique.CreateTableUniqueDelegate;
 import service.TaskService;
 import service.TagService;
 import service.UserService;
@@ -41,7 +42,11 @@ public class TaskServlet extends HttpServlet {
 
         if (action == null) {
             List<Task> taskList = taskService.findAllTasks();
+            int tasksCount = taskList.size();
+
+            request.setAttribute("tasksCount", tasksCount);
             request.setAttribute("tasks", taskList);
+
             request.getRequestDispatcher("/views/dashboard/manager/tasks/home.jsp").forward(request, response);
         } else if (action.equals("edit")) {
             Long id = Long.parseLong(request.getParameter("id"));

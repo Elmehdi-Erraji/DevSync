@@ -51,13 +51,26 @@
                     </div>
                 </div>
                 <!-- end page title -->
+                <div class="row">
+                    <div class="col-xxl-3 col-sm-6">
+                        <div class="card widget-flat text-bg-secondary"> <!-- Changed color to 'secondary' -->
+                            <div class="card-body">
+                                <div class="float-end">
+                                    <i class="ri-task-line widget-icon" style="font-size: 2rem;"></i> <!-- Task icon -->
+                                </div>
+                                <h6 class="text-uppercase mt-0" title="Tasks">Tasks</h6>
+                                <h2 class="my-2"><%= request.getAttribute("tasksCount") %></h2> <!-- Display total tasks -->
+                            </div>
+                        </div>
+                    </div>
 
+
+                </div>
                 <!-- Display Tasks Table -->
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-body p-0
-">
+                            <div class="card-body p-0">
                                 <div class="p-3">
                                     <div class="row">
                                         <div class="col-lg-6">
