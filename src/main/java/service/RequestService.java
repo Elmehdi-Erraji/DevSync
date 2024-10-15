@@ -89,4 +89,16 @@ public class RequestService {
         return requestRepository.findById(requestId)
                 .orElseThrow(() -> new RequestException("Request not found with ID: " + requestId));
     }
+
+
+    public List<Request> findPendingRequests() {
+        return requestRepository.findAllPendingRequests();
+    }
+
+    public void updateRequest(Request request) {
+        if (request.getId() == null) {
+            throw new IllegalArgumentException("Request ID cannot be null when updating.");
+        }
+        requestRepository.updateRequest(request);
+    }
 }

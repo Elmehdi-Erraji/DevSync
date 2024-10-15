@@ -41,7 +41,7 @@
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboards</a></li>
-                                    <li class="breadcrumb-item active">Welcome!</li>
+                                    <li class="breadcrumb-item active">Users !</li>
                                 </ol>
                             </div>
                             <h4 class="page-title">Welcome!</h4>
@@ -58,18 +58,7 @@
                                     <i class="ri-group-2-line widget-icon"></i>
                                 </div>
                                 <h6 class="text-uppercase mt-0" title="Users">Users</h6>
-                                <h2 class="my-2">5</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xxl-3 col-sm-6">
-                        <div class="card widget-flat text-bg-info">
-                            <div class="card-body">
-                                <div class="float-end">
-                                    <i class="ri-folder-line widget-icon"></i>
-                                </div>
-                                <h6 class="text-uppercase mt-0" title="Events">Events</h6>
-                                <h2 class="my-2">5</h2>
+                                <h2 class="my-2"><%= request.getAttribute("totalUsers")%></h2>
                             </div>
                         </div>
                     </div>
@@ -101,7 +90,7 @@
                                             </thead>
                                             <tbody id="tableBody">
                                             <%
-                                                List<User> userList = (List<User>) request.getAttribute("users");
+                                                List<User> userList = (List<User>) request.getAttribute("filteredUsers");
                                                 if (userList != null && !userList.isEmpty()) {
                                                     for (User user : userList) {
                                             %>

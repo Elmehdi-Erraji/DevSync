@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WebServlet("/manager/users")
 public class UserServlet extends HttpServlet {
@@ -36,7 +37,16 @@ public class UserServlet extends HttpServlet {
 
         if (action == null) {
             List<User> userList = userService.findAllUsers();
-            request.setAttribute("users", userList);
+
+            List<User> filteredUsers = userList.stream()
+                            .filter(user -> user.getRole() == Role.USER)
+                            .collect(Collectors.toList());
+
+            int totalUsers = filteredUsers.size();
+
+            request.setAttribute("filteredUsers", filteredUsers);
+            request.setAttribute("totalUsers", totalUsers);
+
             request.getRequestDispatcher("/views/dashboard/manager/users/home.jsp").forward(request, response);
         } else if (action.equals("edit")) {
             Long id = Long.parseLong(request.getParameter("id"));

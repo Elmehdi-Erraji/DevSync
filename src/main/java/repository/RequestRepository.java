@@ -64,6 +64,22 @@ public class RequestRepository {
         return query.getResultList();
     }
 
+    public void updateRequest(Request request) {
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+            if (request.getId() != null) {
+                entityManager.merge(request);
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw e;
+        }
+    }
+
     public void updateRequestStatus(Long requestId, RequestStatus status) {
         entityManager.getTransaction().begin();
         Request request = entityManager.find(Request.class, requestId);
@@ -72,6 +88,13 @@ public class RequestRepository {
             entityManager.merge(request);
         }
         entityManager.getTransaction().commit();
+    }
+
+    public List<Request> findAllPendingRequests() {
+        TypedQuery<Request> query = entityManager.createQuery(
+                "SELECT r FROM Request r WHERE r.status = :status", Request.class);
+        query.setParameter("status", RequestStatus.PENDING);
+        return query.getResultList();
     }
 
 }
