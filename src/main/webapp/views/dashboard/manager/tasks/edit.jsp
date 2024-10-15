@@ -68,8 +68,8 @@
                                             <%
                                                 Task task = (Task) request.getAttribute("task");
                                             %>
-                                            <input type="hidden" name="id" value="<%= task.getId() %>"/> <!-- Hidden input for task ID -->
-                                            <input type="hidden" name="_method" value="PUT"/> <!-- Specify the update operation -->
+                                            <input type="hidden" name="id" value="<%= task.getId() %>"/>
+                                            <input type="hidden" name="_method" value="PUT"/>
 
                                             <div class="mb-3">
                                                 <label for="title" class="form-label">Task Title</label>

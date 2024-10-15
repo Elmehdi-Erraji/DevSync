@@ -6,8 +6,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import repository.TaskRepository;
+import java.util.Arrays;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TaskService {
 
@@ -69,6 +73,38 @@ public class TaskService {
         return taskRepository.findTasksCreatedByUser(userId);
     }
 
+    public List<Task> filterTasks(String[] tagIds, LocalDate startDate, LocalDate dueDate) {
+        List<Task> tasks = findAllTasks();
+
+        // Filter by tags if tagIds are provided
+        if (tagIds != null && tagIds.length > 0) {
+            tasks = tasks.stream()
+                    .filter(task -> task.getTags().stream()
+                            .anyMatch(tag -> Arrays.asList(tagIds).contains(String.valueOf(tag.getId()))))
+                    .collect(Collectors.toList());
+        }
+
+        // Filter by start date if provided
+        if (startDate != null) {
+            tasks = tasks.stream()
+                    .filter(task -> !task.getStartDate().isBefore(startDate))
+                    .collect(Collectors.toList());
+        }
+
+        // Filter by due date if provided
+        if (dueDate != null) {
+            tasks = tasks.stream()
+                    .filter(task -> {
+                        LocalDate taskDueDate = LocalDate.parse(task.getDueDate(), DateTimeFormatter.ISO_DATE);
+                        return !taskDueDate.isAfter(dueDate);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        return tasks;
+    }
+
+
     private void validateTask(Task task) {
         if (task == null) {
             throw new TaskException("Task cannot be null.");
@@ -89,4 +125,5 @@ public class TaskService {
             throw new TaskException("User ID cannot be null.");
         }
     }
+
 }

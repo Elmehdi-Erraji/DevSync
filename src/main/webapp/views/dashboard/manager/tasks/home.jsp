@@ -230,11 +230,38 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                               <h1>hhh</h1>
+                                <!-- Filter Form -->
+                                <form id="filterForm" method="GET" action="${pageContext.request.contextPath}/manager/tasks">
+
+                                    <input type="hidden" name="action" value="filter">
+                                    <div class="mb-3">
+                                        <label for="tags" class="form-label">Tags</label>
+                                        <select multiple class="form-select" id="tags" name="tags[]">
+                                            <%
+                                                List<Tag> allTags = (List<Tag>) request.getAttribute("allTags");
+                                                for (Tag tag : allTags) {
+                                            %>
+                                            <option value="<%= tag.getId() %>"><%= tag.getName() %></option>
+                                            <%
+                                                }
+                                            %>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="startDate" class="form-label">Start Date</label>
+                                        <input type="date" class="form-control" id="startDate" name="startDate">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="dueDate" class="form-label">Due Date</label>
+                                        <input type="date" class="form-control" id="dueDate" name="dueDate">
+                                    </div>
+                                </form>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <!-- You can add the submit button later when you are ready to submit -->
+                                <button type="submit" form="filterForm" class="btn btn-primary">Apply Filter</button>
                             </div>
                         </div>
                     </div>
