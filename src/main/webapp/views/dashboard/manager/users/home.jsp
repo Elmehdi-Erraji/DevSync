@@ -45,6 +45,7 @@
                                 </ol>
                             </div>
                             <h4 class="page-title">Welcome!</h4>
+
                         </div>
                     </div>
                 </div>
