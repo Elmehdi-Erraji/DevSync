@@ -1,4 +1,4 @@
-<%@ page import="model.User" %>
+<%@ page import="domain.User" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -9,6 +9,8 @@
 <body>
 <div class="container">
     <h2>User List</h2>
+
+
 
     <%
         String status = request.getParameter("status");
@@ -60,7 +62,7 @@
         </tbody>
     </table>
 
-    <a href="userForm.jsp" class="btn btn-primary">Add New User</a>
+    <a href="users?action=create" class="btn btn-primary">Add New User</a>
     <a href="home" class="btn btn-info">Back to Home</a>
 </div>
 </body>

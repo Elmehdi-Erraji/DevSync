@@ -3,7 +3,7 @@ package repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
-import model.User;
+import domain.User;
 
 import java.util.List;
 
@@ -68,4 +68,34 @@ public class UserRepository {
         TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u", User.class);
         return query.getResultList();
     }
+
+    public User findByEmail(String email) {
+        try {
+            TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
+            query.setParameter("email", email);
+            return query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void updateTokens(Long userId, int dailyTokens, int monthlyTokens) {
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+            User user = entityManager.find(User.class, userId);
+            if (user != null) {
+                user.setDailyTokens(dailyTokens);
+                user.setMonthlyTokens(monthlyTokens);
+                entityManager.merge(user);
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw new RuntimeException("Failed to update user tokens: " + e.getMessage(), e);
+        }
+    }
+
 }
