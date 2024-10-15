@@ -42,7 +42,7 @@ public class UserServlet extends HttpServlet {
                             .filter(user -> user.getRole() == Role.USER)
                             .collect(Collectors.toList());
 
-            
+
             int totalUsers = filteredUsers.size();
 
             request.setAttribute("filteredUsers", filteredUsers);
