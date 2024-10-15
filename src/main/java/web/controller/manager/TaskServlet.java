@@ -43,8 +43,24 @@ public class TaskServlet extends HttpServlet {
         if (action == null) {
             List<Task> taskList = taskService.findAllTasks();
             int tasksCount = taskList.size();
+            int completedTasks = (int) taskList.stream()
+                            .filter(task -> task.getStatus() == TaskStatus.DONE)
+                            .count();
+            int inProgressTasks = (int) taskList.stream()
+                    .filter(task -> task.getStatus() == TaskStatus.IN_PROGRESS)
+                    .count();
+            int uncompletedTasks = tasksCount - (completedTasks + inProgressTasks);
+
+            double completedPercentage = tasksCount > 0 ? (double) completedTasks / tasksCount * 100 : 0;
+            double inProgressPercentage = tasksCount > 0 ? (double) inProgressTasks / tasksCount * 100 : 0;
+            double uncompletedPercentage = tasksCount > 0 ? (double) uncompletedTasks / tasksCount * 100 : 0;
+
 
             request.setAttribute("tasksCount", tasksCount);
+            request.setAttribute("completedPercentage", String.format("%.2f", completedPercentage));
+            request.setAttribute("inProgressPercentage", String.format("%.2f", inProgressPercentage));
+            request.setAttribute("uncompletedPercentage", String.format("%.2f", uncompletedPercentage));
+
             request.setAttribute("tasks", taskList);
 
             request.getRequestDispatcher("/views/dashboard/manager/tasks/home.jsp").forward(request, response);
