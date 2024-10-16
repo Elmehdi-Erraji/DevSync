@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @WebServlet("/request")
 public class RequestServlet extends HttpServlet {
@@ -44,17 +45,16 @@ public class RequestServlet extends HttpServlet {
         String requestType = request.getParameter("requestType");
 
         Task task = taskService.findTaskById(taskId);
-        User user = userService.findUserById(userId);
-
         if (task == null) {
-            throw new ServletException("Task not found with id: " + taskId);
+            throw new ServletException("Task not found with ID: " + taskId);
         }
 
-        if (user == null) {
-            throw new ServletException("User not found with id: " + userId);
+        Optional<User> userOptional = userService.findUserById(userId);
+        if (userOptional.isEmpty()) {
+            throw new ServletException("User not found with ID: " + userId);
         }
+        User user = userOptional.get();
 
-        // Initialize TokenLog
         TokenLog tokenLog = new TokenLog();
         tokenLog.setTokensUsed(1);
         tokenLog.setAction(requestType);
@@ -72,10 +72,9 @@ public class RequestServlet extends HttpServlet {
                 rejectRequest.setRequestType(RequestType.REJECT);
                 requestService.saveRequest(rejectRequest);
 
-                tokenLog.setPreviousAssignedUser(task.getAssignedUser().getUsername());
+                tokenLog.setPreviousAssignedUser(task.getAssignedUser() != null ? task.getAssignedUser().getUsername() : null);
                 tokenLog.setNewAssignedUser("");
                 tokenLog.setManagerApproved(null);
-
 
                 request.getSession().setAttribute("dailyTokens", dailyTokens - 1);
                 userService.updateUserTokens(userId, dailyTokens - 1, user.getMonthlyTokens());
@@ -89,25 +88,21 @@ public class RequestServlet extends HttpServlet {
             Integer monthlyTokens = (Integer) request.getSession().getAttribute("monthlyTokens");
 
             if (monthlyTokens != null && monthlyTokens > 0) {
-                // Log the token usage for delete
-                tokenLog.setPreviousAssignedUser(null); // Not relevant for delete
-                tokenLog.setNewAssignedUser(null); // Not relevant for delete
-                tokenLog.setManagerApproved(null); // No manager approval needed for delete
+                tokenLog.setPreviousAssignedUser(null);
+                tokenLog.setNewAssignedUser(null);
+                tokenLog.setManagerApproved(null);
 
-                // Update tokens and delete the task
                 request.getSession().setAttribute("monthlyTokens", monthlyTokens - 1);
                 userService.updateUserTokens(userId, user.getDailyTokens(), monthlyTokens - 1);
-                tokenLogService.saveTokenLog(tokenLog); // Save the log
-                taskService.deleteTask(taskId); // Delete the task
+                tokenLogService.saveTokenLog(tokenLog);
+                taskService.deleteTask(taskId);
             } else {
-                // Insufficient tokens handling
                 request.setAttribute("errorMessage", "Insufficient monthly tokens to delete the task.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
         }
 
-        // Redirect to the tasks page after the operation
         response.sendRedirect("/demo2/user/tasks");
     }
 

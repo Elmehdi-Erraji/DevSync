@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
 
 @WebServlet("/login")
@@ -77,9 +78,10 @@ public class loginServlet  extends HttpServlet {
     }
 
     private User authenticateUser(String email, String password) {
-        User user = userService.findByEmail(email);
+        Optional<User> optionalUser = userService.findByEmail(email);
 
-        if (user != null) {
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
             String hashedPassword = PasswordUtils.hashPassword(password);
             if (user.getPassword().equals(hashedPassword)) {
                 return user;

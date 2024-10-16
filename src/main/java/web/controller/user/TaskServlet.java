@@ -129,10 +129,21 @@ public class TaskServlet extends HttpServlet {
             task.setStatus(status);
         }
 
-        User creator = userService.findUserById(creatorId);
-        User assignedUser = userService.findUserById(assignedUserId);
-        task.setCreator(creator);
-        task.setAssignedUser(assignedUser);
+        Optional<User> creatorOptional = userService.findUserById(creatorId);
+        Optional<User> assignedUserOptional = userService.findUserById(assignedUserId);
+
+        if (creatorOptional.isPresent()) {
+            task.setCreator(creatorOptional.get());
+        } else {
+            throw new IllegalArgumentException("Creator not found with ID: " + creatorId);
+        }
+
+        if (assignedUserOptional.isPresent()) {
+            task.setAssignedUser(assignedUserOptional.get());
+        } else {
+            throw new IllegalArgumentException("Assigned user not found with ID: " + assignedUserId);
+        }
+
 
         if (tagIds != null) {
             task.getTags().clear();

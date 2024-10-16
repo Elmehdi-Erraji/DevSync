@@ -192,10 +192,12 @@ public class TaskServlet extends HttpServlet {
             task.setStatus(TaskStatus.NEW);
 
 
-            User creator = userService.findUserById(creatorId);
-            User assignedUser = userService.findUserById(assignedUserId);
-            task.setCreator(creator);
-            task.setAssignedUser(assignedUser);
+            Optional<User> optionalCreator = userService.findUserById(creatorId);
+            Optional<User> optionalAssignedUser = userService.findUserById(assignedUserId);
+
+            optionalCreator.ifPresent(task::setCreator);
+            optionalAssignedUser.ifPresent(task::setAssignedUser);
+
 
             if (tagIds != null) {
                 for (String tagId : tagIds) {

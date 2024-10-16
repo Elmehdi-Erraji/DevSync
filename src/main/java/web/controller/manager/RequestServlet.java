@@ -182,11 +182,11 @@ public class RequestServlet extends HttpServlet {
         if (task == null) {
             throw new IllegalArgumentException("Task not found.");
         }
-        User assignedUser = userService.findUserById(assignedUserId);
+        Optional<User> optionalAssignedUser = userService.findUserById(assignedUserId);
 
-        if (assignedUser == null) {
-            throw new IllegalArgumentException("Assigned user not found.");
-        }
+        User assignedUser = optionalAssignedUser
+                .orElseThrow(() -> new IllegalArgumentException("Assigned user not found."));
+
 
         task.setAssignedUser(assignedUser);
         task.setRefused(true);

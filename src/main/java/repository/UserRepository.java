@@ -6,6 +6,7 @@ import jakarta.persistence.TypedQuery;
 import domain.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserRepository {
 
@@ -15,53 +16,61 @@ public class UserRepository {
         this.entityManager = entityManager;
     }
 
-    public void insertUser(User user) {
+    public User insertUser(User user) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
             entityManager.persist(user);
             transaction.commit();
+            return user; // Return the user object after insertion.
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
             e.printStackTrace();
+            throw new RuntimeException("Failed to insert user: " + e.getMessage(), e);
         }
     }
 
-    public void updateUser(User user) {
+    public User updateUser(User user) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
-            entityManager.merge(user);
+            User updatedUser = entityManager.merge(user); // Return the updated user object.
             transaction.commit();
+            return updatedUser; // Return the updated user object after merging.
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
             e.printStackTrace();
+            throw new RuntimeException("Failed to update user: " + e.getMessage(), e);
         }
     }
 
-    public void deleteUser(Long userId) {
+    public boolean deleteUser(Long userId) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
             User user = entityManager.find(User.class, userId);
             if (user != null) {
                 entityManager.remove(user);
+                transaction.commit();
+                return true; // Indicate successful deletion.
             }
             transaction.commit();
+            return false; // Indicate user was not found.
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
             e.printStackTrace();
+            return false; // Indicate failure.
         }
     }
 
-    public User findUserById(Long userId) {
-        return entityManager.find(User.class, userId);
+    public Optional<User> findUserById(Long userId) {
+        return Optional.ofNullable(entityManager.find(User.class, userId)); // Return Optional<User>
     }
 
     public List<User> findAllUsers() {
@@ -69,33 +78,13 @@ public class UserRepository {
         return query.getResultList();
     }
 
-    public User findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         try {
             TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
             query.setParameter("email", email);
-            return query.getSingleResult();
+            return Optional.of(query.getSingleResult()); // Return the user wrapped in Optional
         } catch (Exception e) {
-            return null;
+            return Optional.empty(); // Return an empty Optional if no user is found
         }
     }
-
-    public void updateTokens(Long userId, int dailyTokens, int monthlyTokens) {
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-            User user = entityManager.find(User.class, userId);
-            if (user != null) {
-                user.setDailyTokens(dailyTokens);
-                user.setMonthlyTokens(monthlyTokens);
-                entityManager.merge(user);
-            }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction.isActive()) {
-                transaction.rollback();
-            }
-            throw new RuntimeException("Failed to update user tokens: " + e.getMessage(), e);
-        }
-    }
-
 }

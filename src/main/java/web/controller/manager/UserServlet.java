@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @WebServlet("/manager/users")
@@ -36,12 +37,13 @@ public class UserServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if (action == null) {
-            List<User> userList = userService.findAllUsers();
+            Optional<List<User>> userListOptional = Optional.ofNullable(userService.findAllUsers());
+
+            List<User> userList = userListOptional.orElse(List.of());
 
             List<User> filteredUsers = userList.stream()
-                            .filter(user -> user.getRole() == Role.USER)
-                            .collect(Collectors.toList());
-
+                    .filter(user -> user.getRole() == Role.USER)
+                    .collect(Collectors.toList());
 
             int totalUsers = filteredUsers.size();
 
@@ -49,12 +51,20 @@ public class UserServlet extends HttpServlet {
             request.setAttribute("totalUsers", totalUsers);
 
             request.getRequestDispatcher("/views/dashboard/manager/users/home.jsp").forward(request, response);
-        } else if (action.equals("edit")) {
+        }
+        else if (action.equals("edit")) {
             Long id = Long.parseLong(request.getParameter("id"));
-            User user = userService.findUserById(id);
-            request.setAttribute("user", user);
-            request.getRequestDispatcher("/views/dashboard/manager/users/edit.jsp").forward(request, response);
-        } else if (action.equals("create")) {
+            Optional<User> userOptional = userService.findUserById(id);
+
+            if (userOptional.isPresent()) {
+                request.setAttribute("user", userOptional.get());
+                request.getRequestDispatcher("/views/dashboard/manager/users/edit.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "User not found.");
+                request.getRequestDispatcher("/views/dashboard/manager/users/error.jsp").forward(request, response);
+            }
+        }
+        else if (action.equals("create")) {
             request.getRequestDispatcher("/views/dashboard/manager/users/create.jsp").forward(request, response);
         }
     }
