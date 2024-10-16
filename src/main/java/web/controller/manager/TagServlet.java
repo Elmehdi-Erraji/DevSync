@@ -58,7 +58,10 @@ public class TagServlet extends HttpServlet {
             request.getRequestDispatcher("/views/dashboard/manager/tags/home.jsp").forward(request, response);
         } else if (action.equals("edit")) {
             Long id = Long.parseLong(request.getParameter("id"));
-            Optional<Tag> tag = tagService.findTagById(id);
+            Optional<Tag> tagInfo = tagService.findTagById(id);
+
+            Tag tag = tagInfo.get();
+
             request.setAttribute("tag", tag);
             request.getRequestDispatcher("/views/dashboard/manager/tags/edit.jsp").forward(request, response);
         } else if (action.equals("create")) {
