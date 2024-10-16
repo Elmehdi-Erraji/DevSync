@@ -71,7 +71,16 @@
                                             <h4 class="text-center mt-4">Tasks Assigned to You</h4> <!-- Centered Heading for Assigned Tasks -->
                                             <hr style="border-top: 2px solid black; width: 50%; margin: 10px auto;" /> <!-- Black line for separation -->
                                             <div class="table-responsive">
-
+                                                <%
+                                                    String errorMessage = (String) request.getAttribute("errorMessage");
+                                                    if (errorMessage != null) {
+                                                %>
+                                                <div class="alert alert-danger">
+                                                    <%= errorMessage %>
+                                                </div>
+                                                <%
+                                                    }
+                                                %>
                                                 <table class="table table-nowrap table-hover mb-0">
                                                     <thead>
                                                     <tr>

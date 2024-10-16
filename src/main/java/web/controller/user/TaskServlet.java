@@ -191,7 +191,6 @@ public class TaskServlet extends HttpServlet {
         task.setAssignedUser(userService.findUserById(assignedUserId).orElseThrow(
                 () -> new IllegalArgumentException("Assigned user not found")));
 
-        // Update status from request if provided
         String statusParam = request.getParameter("status");
         if (statusParam != null && !statusParam.isEmpty()) {
             try {

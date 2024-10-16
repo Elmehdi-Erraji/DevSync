@@ -5,6 +5,7 @@ import domain.User;
 import domain.enums.RequestStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
@@ -95,6 +96,18 @@ public class RequestRepository {
                 "SELECT r FROM Request r WHERE r.status = :status", Request.class);
         query.setParameter("status", RequestStatus.PENDING);
         return query.getResultList();
+    }
+
+    public Optional<Request> findRequestByTaskAndUser(Long taskId, Long userId) {
+        String jpql = "SELECT r FROM Request r WHERE r.task.id = :taskId AND r.user.id = :userId";
+        TypedQuery<Request> query = entityManager.createQuery(jpql, Request.class);
+        query.setParameter("taskId", taskId);
+        query.setParameter("userId", userId);
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
 }

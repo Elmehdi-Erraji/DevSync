@@ -55,6 +55,14 @@ public class RequestServlet extends HttpServlet {
         }
         User user = userOptional.get();
 
+        // Check if a request already exists for this task
+        Optional<Request> existingRequest = requestService.findRequestByTaskAndUser(taskId, userId);
+        if (existingRequest.isPresent()) {
+            request.setAttribute("errorMessage", "A request has already been made for this task. Please wait for the current request to be processed.");
+            request.getRequestDispatcher("/demo2/user/tasks").forward(request, response);
+            return;
+        }
+
         TokenLog tokenLog = new TokenLog();
         tokenLog.setTokensUsed(1);
         tokenLog.setAction(requestType);
@@ -81,7 +89,7 @@ public class RequestServlet extends HttpServlet {
                 tokenLogService.saveTokenLog(tokenLog);
             } else {
                 request.setAttribute("errorMessage", "Insufficient daily tokens to reject the task.");
-                request.getRequestDispatcher("error.jsp").forward(request, response);
+                request.getRequestDispatcher("/demo2/user/tasks").forward(request, response);
                 return;
             }
         } else if ("DELETE".equalsIgnoreCase(requestType)) {
@@ -98,7 +106,7 @@ public class RequestServlet extends HttpServlet {
                 taskService.deleteTask(taskId);
             } else {
                 request.setAttribute("errorMessage", "Insufficient monthly tokens to delete the task.");
-                request.getRequestDispatcher("error.jsp").forward(request, response);
+                request.getRequestDispatcher("/demo2/user/tasks").forward(request, response);
                 return;
             }
         }
