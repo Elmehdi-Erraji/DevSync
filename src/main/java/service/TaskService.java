@@ -104,7 +104,6 @@ public class TaskService {
         return tasks;
     }
 
-
     private void validateTask(Task task) {
         if (task == null) {
             throw new TaskException("Task cannot be null.");

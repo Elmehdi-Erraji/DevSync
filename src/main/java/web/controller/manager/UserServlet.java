@@ -83,6 +83,13 @@ public class UserServlet extends HttpServlet {
             String email = request.getParameter("email");
             String roleParam = request.getParameter("role");
 
+            // Print all input values to debug
+            System.out.println("Received POST data:");
+            System.out.println("ID: " + id);
+            System.out.println("Username: " + username);
+            System.out.println("Email: " + email);
+            System.out.println("Role: " + roleParam);
+
             if (username == null || email == null || roleParam == null) {
                 throw new ServletException("Required form fields are missing");
             }
@@ -101,6 +108,10 @@ public class UserServlet extends HttpServlet {
 
             if (id != null && !id.isEmpty()) {
                 user.setId((int) Long.parseLong(id));
+
+                // Print user object before calling update
+                System.out.println("Updating user: " + user);
+
                 userService.updateUser(user);
             } else {
                 String password = request.getParameter("password");
@@ -110,6 +121,9 @@ public class UserServlet extends HttpServlet {
 
                 String hashedPassword = PasswordUtils.hashPassword(password);
                 user.setPassword(hashedPassword);
+
+                // Print user object before insertion
+                System.out.println("Inserting new user: " + user);
 
                 userService.insertUser(user);
             }
