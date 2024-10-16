@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
-@WebServlet("/login")
+@WebServlet("/")
 public class loginServlet  extends HttpServlet {
 
     private UserService userService = new UserService();
