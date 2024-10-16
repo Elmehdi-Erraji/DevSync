@@ -78,6 +78,7 @@
                                                         <th>Task ID</th>
                                                         <th>Title</th>
                                                         <th>Description</th>
+                                                        <th>Start Date</th>
                                                         <th>Due Date</th>
                                                         <th>Status</th>
                                                         <th>Assigned By</th>
@@ -95,6 +96,7 @@
                                                         <td><%= task.getId() %></td>
                                                         <td><%= task.getTitle() %></td>
                                                         <td><%= task.getDescription() %></td>
+                                                        <td><%= task.getStartDate() %></td>
                                                         <td><%= task.getDueDate() %></td>
                                                         <td>
                                                             <%

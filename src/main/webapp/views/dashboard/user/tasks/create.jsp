@@ -82,8 +82,6 @@
                                             <input type="hidden" name="assignedUser" value="<%= session.getAttribute("id") %>">
                                             <input type="hidden" name="status" value="NEW">
 
-
-
                                             <div class="mb-3">
                                                 <label for="tags" class="form-label">Tags</label>
                                                 <select multiple class="form-select" id="tags" name="tags">
