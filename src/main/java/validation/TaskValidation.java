@@ -29,4 +29,27 @@ public class TaskValidation {
     public static boolean isValidTags(String[] tagIds) {
         return tagIds != null && tagIds.length > 0;
     }
+
+    public static boolean isValid(String title, String description, Long creatorId, Long assignedUserId,
+                                  String[] tagIds, LocalDate startDate, LocalDate dueDate) {
+        if (isNullOrEmpty(title) || isNullOrEmpty(description) || creatorId == null || assignedUserId == null) {
+            return false;
+        }
+
+        if (startDate != null && dueDate != null && startDate.isAfter(dueDate)) {
+            return false;
+        }
+
+        if (tagIds != null && tagIds.length == 0) {
+            return false;
+        }
+
+        // If everything is valid, return true
+        return true;
+    }
+
+    // Helper method to check for null or empty strings
+    private static boolean isNullOrEmpty(String str) {
+        return str == null || str.trim().isEmpty();
+    }
 }

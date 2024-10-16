@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @WebServlet("/user/tasks")
 public class TaskServlet extends HttpServlet {
@@ -58,7 +59,7 @@ public class TaskServlet extends HttpServlet {
             Task task = taskService.findTaskById(id);
             request.setAttribute("task", task);
 
-            List<Tag> tags = tagService.findAllTags();
+            Optional<List<Tag>> tags = tagService.findAllTags();
             request.setAttribute("tags", tags);
             request.getRequestDispatcher("/views/dashboard/user/tasks/edit.jsp").forward(request, response);
         } else if (action.equals("statusUpdate")) {
@@ -67,7 +68,7 @@ public class TaskServlet extends HttpServlet {
             request.setAttribute("task", task);
             request.getRequestDispatcher("/views/dashboard/user/tasks/statusUpdate.jsp").forward(request, response);
         } else if (action.equals("create")) {
-            List<Tag> tags = tagService.findAllTags();
+            Optional<List<Tag>> tags = tagService.findAllTags();
             request.setAttribute("tags", tags);
             request.getRequestDispatcher("/views/dashboard/user/tasks/create.jsp").forward(request, response);
         }
@@ -136,8 +137,8 @@ public class TaskServlet extends HttpServlet {
         if (tagIds != null) {
             task.getTags().clear();
             for (String tagId : tagIds) {
-                Tag tag = tagService.findTagById(Long.parseLong(tagId));
-                task.getTags().add(tag);
+                Optional<Tag> tag = tagService.findTagById(Long.parseLong(tagId));
+                tag.ifPresent(task.getTags()::add);
             }
         }
     }

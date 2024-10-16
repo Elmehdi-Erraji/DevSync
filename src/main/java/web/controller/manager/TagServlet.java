@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import jakarta.validation.Validation;
@@ -46,7 +47,8 @@ public class TagServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if (action == null) {
-            List<Tag> tagList = tagService.findAllTags();
+            Optional<List<Tag>> tagListOptional = tagService.findAllTags();
+            List<Tag> tagList = tagListOptional.orElse(List.of());
 
             int tagsCount = tagList.size();
 
@@ -56,7 +58,7 @@ public class TagServlet extends HttpServlet {
             request.getRequestDispatcher("/views/dashboard/manager/tags/home.jsp").forward(request, response);
         } else if (action.equals("edit")) {
             Long id = Long.parseLong(request.getParameter("id"));
-            Tag tag = tagService.findTagById(id);
+            Optional<Tag> tag = tagService.findTagById(id);
             request.setAttribute("tag", tag);
             request.getRequestDispatcher("/views/dashboard/manager/tags/edit.jsp").forward(request, response);
         } else if (action.equals("create")) {

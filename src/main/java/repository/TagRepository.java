@@ -6,6 +6,7 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TagRepository {
 
@@ -15,23 +16,23 @@ public class TagRepository {
         this.entityManager = entityManager;
     }
 
-    public List<Tag> findAll() {
+    public Optional<List<Tag>> findAll() {
         TypedQuery<Tag> query = entityManager.createQuery("SELECT t FROM Tag t", Tag.class);
-        return query.getResultList();
+        List<Tag> result = query.getResultList();
+        return result.isEmpty() ? Optional.empty() : Optional.of(result);
     }
-
-    public Tag findById(Long id) {
-        return entityManager.find(Tag.class, id);
+    public Optional<Tag> findById(Long id) {
+        Tag tag = entityManager.find(Tag.class, id);
+        return Optional.ofNullable(tag);
     }
-
-    public void save(Tag tag) {
+    public Tag save(Tag tag) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
             if (tag.getId() == null) {
                 entityManager.persist(tag);
             } else {
-                entityManager.merge(tag);
+                tag = entityManager.merge(tag);
             }
             transaction.commit();
         } catch (Exception e) {
@@ -40,22 +41,26 @@ public class TagRepository {
             }
             throw e;
         }
+        return tag;
     }
 
-    public void delete(Long id) {
+    public boolean delete(Long id) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
             Tag tag = entityManager.find(Tag.class, id);
             if (tag != null) {
                 entityManager.remove(tag);
+                transaction.commit();
+                return true;
             }
-            transaction.commit();
+            transaction.rollback();
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
             throw e;
         }
+        return false;
     }
 }
