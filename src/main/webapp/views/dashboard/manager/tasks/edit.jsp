@@ -115,7 +115,7 @@
                                                 <label for="tags" class="form-label">Tags</label>
                                                 <select multiple class="form-select" id="tags" name="tags">
                                                     <%
-                                                        List<Tag> tagList = (List<Tag>) request.getAttribute("tags");
+                                                        List<Tag> tagList = (List<Tag>) request.getAttribute("tagList");
                                                         if (tagList != null && !tagList.isEmpty()) {
                                                             for (Tag tag : tagList) {
                                                                 boolean selected = task.getTags().stream().anyMatch(t -> t.getId() == tag.getId());

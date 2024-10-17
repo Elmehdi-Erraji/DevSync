@@ -61,13 +61,15 @@ public class TaskServlet extends HttpServlet {
                 request.setAttribute("users", userService.findAllUsers());
                 Optional<List<Tag>> tagListOptional = tagService.findAllTags();
                 List<Tag> tagList = tagListOptional.orElse(List.of());
-                request.setAttribute("tagList", tagList);                request.getRequestDispatcher("/views/dashboard/manager/tasks/edit.jsp").forward(request, response);
+                request.setAttribute("tagList", tagList);
+                request.getRequestDispatcher("/views/dashboard/manager/tasks/edit.jsp").forward(request, response);
 
             } else if (action.equals("create")) {
                 request.setAttribute("users", userService.findAllUsers());
                 Optional<List<Tag>> tagListOptional = tagService.findAllTags();
                 List<Tag> tagList = tagListOptional.orElse(List.of());
-                request.setAttribute("tagList", tagList);                request.getRequestDispatcher("/views/dashboard/manager/tasks/create.jsp").forward(request, response);
+                request.setAttribute("tagList", tagList);
+                request.getRequestDispatcher("/views/dashboard/manager/tasks/create.jsp").forward(request, response);
             }
         } catch (Exception e) {
             System.err.println("Error in doGet: " + e.getMessage());

@@ -2,29 +2,34 @@ package repository;
 
 import domain.Tag;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.Persistence;
 
 import java.util.List;
 import java.util.Optional;
 
 public class TagRepository {
 
-    private EntityManager entityManager;
+    private static final EntityManagerFactory entityManagerFactory =
+            Persistence.createEntityManagerFactory("your-persistence-unit-name");
 
-    public TagRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    private final EntityManager entityManager;
+
+    public TagRepository() {
+        this.entityManager = entityManagerFactory.createEntityManager();
     }
 
     public Optional<List<Tag>> findAll() {
-        TypedQuery<Tag> query = entityManager.createQuery("SELECT t FROM Tag t", Tag.class);
-        List<Tag> result = query.getResultList();
+        List<Tag> result = entityManager.createQuery("SELECT t FROM Tag t", Tag.class)
+                .getResultList();
         return result.isEmpty() ? Optional.empty() : Optional.of(result);
     }
+
     public Optional<Tag> findById(Long id) {
-        Tag tag = entityManager.find(Tag.class, id);
-        return Optional.ofNullable(tag);
+        return Optional.ofNullable(entityManager.find(Tag.class, id));
     }
+
     public Tag save(Tag tag) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {

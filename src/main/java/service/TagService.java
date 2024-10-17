@@ -2,9 +2,6 @@ package service;
 
 import domain.Tag;
 import exception.TagException;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import repository.TagRepository;
 
 import java.util.List;
@@ -15,9 +12,7 @@ public class TagService {
     private final TagRepository tagRepository;
 
     public TagService() {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("your-persistence-unit-name");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        this.tagRepository = new TagRepository(entityManager);
+        this.tagRepository = new TagRepository();
     }
 
     public Tag insertTag(Tag tag) {
