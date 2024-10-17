@@ -1,8 +1,6 @@
 package repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import domain.User;
 
 import java.util.List;
@@ -10,10 +8,13 @@ import java.util.Optional;
 
 public class UserRepository {
 
+    private static final EntityManagerFactory entityManagerFactory =
+            Persistence.createEntityManagerFactory("your-persistence-unit-name");
+
     private final EntityManager entityManager;
 
-    public UserRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public UserRepository() {
+        this.entityManager = entityManagerFactory.createEntityManager();
     }
 
     public User insertUser(User user) {
@@ -38,13 +39,11 @@ public class UserRepository {
             transaction.begin();
             System.out.println("Updating user: " + user);
 
-            // Ensure the user exists and is attached to the EntityManager
             User existingUser = entityManager.find(User.class, user.getId());
             if (existingUser == null) {
                 throw new RuntimeException("User not found for ID: " + user.getId());
             }
 
-            // Update only the fields that changed
             existingUser.setUsername(user.getUsername());
             existingUser.setEmail(user.getEmail());
             existingUser.setRole(user.getRole());

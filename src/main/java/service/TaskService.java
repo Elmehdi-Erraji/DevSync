@@ -18,9 +18,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
 
     public TaskService() {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("your-persistence-unit-name");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        this.taskRepository = new TaskRepository(entityManager);
+        this.taskRepository = new TaskRepository();
     }
 
     public void insertTask(Task task) {

@@ -15,9 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public UserService() {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("your-persistence-unit-name");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        this.userRepository = new UserRepository(entityManager);
+        this.userRepository = new UserRepository();
     }
 
     public User insertUser(User user) {
