@@ -1,3 +1,4 @@
+// TagRepository.java
 package repository;
 
 import domain.Tag;
@@ -9,7 +10,7 @@ import jakarta.persistence.Persistence;
 import java.util.List;
 import java.util.Optional;
 
-public class TagRepository {
+public class TagRepository implements TagRepositoryInterface {
 
     private static final EntityManagerFactory entityManagerFactory =
             Persistence.createEntityManagerFactory("your-persistence-unit-name");
@@ -20,16 +21,19 @@ public class TagRepository {
         this.entityManager = entityManagerFactory.createEntityManager();
     }
 
+    @Override
     public Optional<List<Tag>> findAll() {
         List<Tag> result = entityManager.createQuery("SELECT t FROM Tag t", Tag.class)
                 .getResultList();
         return result.isEmpty() ? Optional.empty() : Optional.of(result);
     }
 
+    @Override
     public Optional<Tag> findById(Long id) {
         return Optional.ofNullable(entityManager.find(Tag.class, id));
     }
 
+    @Override
     public Tag save(Tag tag) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
@@ -44,11 +48,12 @@ public class TagRepository {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
-            throw e;
+            throw e; // Consider logging the exception for better tracking
         }
         return tag;
     }
 
+    @Override
     public boolean delete(Long id) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
@@ -64,7 +69,7 @@ public class TagRepository {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
-            throw e;
+            throw e; // Consider logging the exception for better tracking
         }
         return false;
     }
