@@ -15,14 +15,14 @@ import static org.mockito.Mockito.*;
 public class TagServiceTest {
 
     @Mock
-    private TagRepositoryInterface tagRepository; // Mocking the interface
+    private TagRepositoryInterface tagRepository;
 
     @InjectMocks
-    private TagService tagService; // This should now work correctly
+    private TagService tagService;
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this); // Initialize mocks
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -38,5 +38,4 @@ public class TagServiceTest {
         verify(tagRepository, times(1)).save(tag);
     }
 
-    // You can add more tests for other methods here
 }

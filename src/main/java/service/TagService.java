@@ -3,17 +3,15 @@ package service;
 
 import domain.Tag;
 import exception.TagException;
-import jakarta.validation.Valid;
-import repository.TagRepositoryInterface; // Use the interface
+import repository.TagRepositoryInterface;
 
 import java.util.List;
 import java.util.Optional;
 
 public class TagService {
 
-    private final TagRepositoryInterface tagRepository; // Change to the interface type
+    private final TagRepositoryInterface tagRepository;
 
-    // Constructor injection
     public TagService(TagRepositoryInterface tagRepository) {
         this.tagRepository = tagRepository;
     }
