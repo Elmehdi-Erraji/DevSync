@@ -5,17 +5,20 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import domain.User;
+import repository.TagRepositoryInterface;
 import repository.UserRepository;
+import repository.UserRepositoryInterface;
 
 import java.util.List;
 import java.util.Optional;
 
 public class UserService {
 
-    private final UserRepository userRepository;
 
-    public UserService() {
-        this.userRepository = new UserRepository();
+    private final UserRepositoryInterface userRepository;
+
+    public UserService(UserRepositoryInterface userRepository) {
+        this.userRepository = userRepository;
     }
 
     public User insertUser(User user) {

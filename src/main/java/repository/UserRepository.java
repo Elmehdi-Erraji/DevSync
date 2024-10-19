@@ -6,7 +6,7 @@ import domain.User;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepository {
+public class UserRepository implements UserRepositoryInterface {
 
     private static final EntityManagerFactory entityManagerFactory =
             Persistence.createEntityManagerFactory("your-persistence-unit-name");
@@ -17,6 +17,7 @@ public class UserRepository {
         this.entityManager = entityManagerFactory.createEntityManager();
     }
 
+    @Override
     public User insertUser(User user) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
@@ -33,6 +34,7 @@ public class UserRepository {
         }
     }
 
+    @Override
     public User updateUser(User user) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
@@ -64,6 +66,7 @@ public class UserRepository {
     }
 
 
+    @Override
     public boolean deleteUser(Long userId) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
@@ -85,15 +88,18 @@ public class UserRepository {
         }
     }
 
+    @Override
     public Optional<User> findUserById(Long userId) {
         return Optional.ofNullable(entityManager.find(User.class, userId)); // Return Optional<User>
     }
 
+    @Override
     public List<User> findAllUsers() {
         TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u", User.class);
         return query.getResultList();
     }
 
+    @Override
     public Optional<User> findByEmail(String email) {
         try {
             TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);

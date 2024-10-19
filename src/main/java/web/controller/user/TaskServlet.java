@@ -5,6 +5,7 @@ import domain.Tag;
 import domain.User;
 import domain.enums.TaskStatus;
 import repository.TagRepository;
+import repository.UserRepository;
 import service.TaskService;
 import service.TagService;
 import service.UserService;
@@ -37,7 +38,7 @@ public class TaskServlet extends HttpServlet {
     public void init() throws ServletException {
         try {
             taskService = new TaskService();
-            userService = new UserService();
+            userService = new UserService(new UserRepository());
             tagService = new TagService(new TagRepository());
             validatorFactory = Validation.buildDefaultValidatorFactory();
             validator = validatorFactory.getValidator();

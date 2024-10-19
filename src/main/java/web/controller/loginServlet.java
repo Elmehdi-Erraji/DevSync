@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import repository.UserRepository;
 import service.UserService;
 import util.PasswordUtils;
 import web.vm.LoginVM;
@@ -23,7 +24,7 @@ import java.util.Set;
 @WebServlet("/")
 public class loginServlet  extends HttpServlet {
 
-    private UserService userService = new UserService();
+    private final UserService userService = new UserService(new UserRepository());
     private Validator validator;
 
     @Override

@@ -6,6 +6,7 @@ import domain.TokenLog;
 import domain.User;
 import domain.enums.RequestStatus;
 import domain.enums.RequestType;
+import repository.UserRepository;
 import service.*;
 
 import javax.servlet.ServletException;
@@ -30,7 +31,7 @@ public class RequestServlet extends HttpServlet {
         try {
             requestService = new RequestService();
             taskService = new TaskService();
-            userService = new UserService();
+            userService = new UserService(new UserRepository());
             tokenLogService = new TokenLogService();
         } catch (Exception e) {
             throw new ServletException("Failed to initialize RequestServlet", e);

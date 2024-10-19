@@ -2,6 +2,7 @@ package web.controller.manager;
 
 import domain.User;
 import domain.enums.Role;
+import repository.UserRepository;
 import service.UserService;
 import util.PasswordUtils;
 
@@ -26,7 +27,7 @@ public class UserServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         try {
-            userService = new UserService();
+            userService = new UserService(new UserRepository());
         } catch (Exception e) {
             throw new ServletException("Failed to initialize UserServlet", e);
         }

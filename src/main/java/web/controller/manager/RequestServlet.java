@@ -5,6 +5,7 @@ import domain.Task;
 import domain.User;
 import domain.enums.RequestStatus;
 import domain.enums.RequestType;
+import repository.UserRepository;
 import service.RequestService;
 import service.TaskService;
 import service.UserService;
@@ -31,7 +32,7 @@ public class RequestServlet extends HttpServlet {
         try {
             requestService = new RequestService();
             taskService = new TaskService();
-            userService = new UserService();
+            userService = new UserService(new UserRepository());
         } catch (Exception e) {
             throw new ServletException("Failed to initialize RequestServlet", e);
         }
