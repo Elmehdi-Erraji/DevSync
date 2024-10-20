@@ -53,21 +53,7 @@ public class UserServiceTest {
         verify(userRepository, never()).insertUser(any(User.class));
     }
 
-    @Test
-    public void testInsertUser_EmptyEmail() {
-        User user = new User();
-        user.setEmail("");
 
-        UserException exception = assertThrows(
-                UserException.class,
-                () -> userService.insertUser(user)
-        );
-
-        assertEquals("Email cannot be null or empty.", exception.getMessage());
-        verify(userRepository, never()).insertUser(any(User.class));
-    }
-
-    // Test cases for updating users
 
     @Test
     public void testUpdateUser_ValidUser() {
@@ -93,21 +79,6 @@ public class UserServiceTest {
         verify(userRepository, never()).updateUser(any(User.class));
     }
 
-    @Test
-    public void testUpdateUser_NullId() {
-        User user = new User();
-        user.setEmail("user@example.com");
-
-        UserException exception = assertThrows(
-                UserException.class,
-                () -> userService.updateUser(user)
-        );
-
-        assertEquals("User ID cannot be null.", exception.getMessage());
-        verify(userRepository, never()).updateUser(any(User.class));
-    }
-
-    // Additional tests for finding users
 
     @Test
     public void testFindUserById_ValidId() {

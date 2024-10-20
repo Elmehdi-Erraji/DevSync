@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
-@WebServlet("/")
+@WebServlet("/login")
 public class loginServlet  extends HttpServlet {
 
     private final UserService userService = new UserService(new UserRepository());

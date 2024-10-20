@@ -25,14 +25,14 @@ public class UserService {
         if (user == null) {
             throw new UserException("User cannot be null.");
         }
-        return userRepository.insertUser(user); // Ensure this returns the User object.
+        return userRepository.insertUser(user);
     }
 
     public User updateUser(User user) {
         if (user == null) {
             throw new UserException("User cannot be null.");
         }
-        return userRepository.updateUser(user); // Ensure this returns the User object.
+        return userRepository.updateUser(user);
     }
 
     public boolean deleteUser(Long userId) {
