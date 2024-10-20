@@ -5,6 +5,8 @@ import domain.Tag;
 import domain.User;
 import domain.enums.TaskStatus;
 import org.hibernate.dialect.unique.CreateTableUniqueDelegate;
+import repository.TagRepository;
+import repository.UserRepository;
 import service.TaskService;
 import service.TagService;
 import service.UserService;
@@ -21,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @WebServlet("/manager/tasks")
 public class TaskServlet extends HttpServlet {
@@ -32,8 +35,8 @@ public class TaskServlet extends HttpServlet {
     public void init() throws ServletException {
         try {
             taskService = new TaskService();
-            userService = new UserService();
-            tagService = new TagService();
+            userService = new UserService(new UserRepository());
+            tagService = new TagService(new TagRepository());
         } catch (Exception e) {
             throw new ServletException("Failed to initialize TaskServlet", e);
         }
@@ -49,19 +52,25 @@ public class TaskServlet extends HttpServlet {
                 tasks = (action == null) ? taskService.findAllTasks() : filterTasksFromRequest(request);
                 setTaskStatistics(request, tasks);  // Reuse the statistics logic
                 request.setAttribute("tasks", tasks);
-                request.setAttribute("allTags", tagService.findAllTags());
+                Optional<List<Tag>> tagListOptional = tagService.findAllTags();
+                List<Tag> tagList = tagListOptional.orElse(List.of());
+                request.setAttribute("tagList", tagList);
                 request.getRequestDispatcher("/views/dashboard/manager/tasks/home.jsp").forward(request, response);
 
             } else if (action.equals("edit")) {
                 Long id = Long.parseLong(request.getParameter("id"));
                 request.setAttribute("task", taskService.findTaskById(id));
                 request.setAttribute("users", userService.findAllUsers());
-                request.setAttribute("tags", tagService.findAllTags());
+                Optional<List<Tag>> tagListOptional = tagService.findAllTags();
+                List<Tag> tagList = tagListOptional.orElse(List.of());
+                request.setAttribute("tagList", tagList);
                 request.getRequestDispatcher("/views/dashboard/manager/tasks/edit.jsp").forward(request, response);
 
             } else if (action.equals("create")) {
                 request.setAttribute("users", userService.findAllUsers());
-                request.setAttribute("tags", tagService.findAllTags());
+                Optional<List<Tag>> tagListOptional = tagService.findAllTags();
+                List<Tag> tagList = tagListOptional.orElse(List.of());
+                request.setAttribute("tagList", tagList);
                 request.getRequestDispatcher("/views/dashboard/manager/tasks/create.jsp").forward(request, response);
             }
         } catch (Exception e) {
@@ -131,49 +140,49 @@ public class TaskServlet extends HttpServlet {
 
             if (!TaskValidation.isValidTitle(title)) {
                 request.setAttribute("error", "Title must not be empty and cannot exceed 100 characters.");
-                loadUsersAndTags(request);  
+                loadUsersAndTags(request);
                 request.getRequestDispatcher("/views/dashboard/manager/tasks/create.jsp").forward(request, response);
                 return;
             }
 
             if (!TaskValidation.isValidDescription(description)) {
                 request.setAttribute("error", "Description must not be empty and cannot exceed 500 characters.");
-                loadUsersAndTags(request);  
+                loadUsersAndTags(request);
                 request.getRequestDispatcher("/views/dashboard/manager/tasks/create.jsp").forward(request, response);
                 return;
             }
 
             if (!TaskValidation.isValidUser(creatorId)) {
                 request.setAttribute("error", "A valid creator must be selected.");
-                loadUsersAndTags(request);  
+                loadUsersAndTags(request);
                 request.getRequestDispatcher("/views/dashboard/manager/tasks/create.jsp").forward(request, response);
                 return;
             }
 
             if (!TaskValidation.isValidUser(assignedUserId)) {
                 request.setAttribute("error", "A valid assigned user must be selected.");
-                loadUsersAndTags(request);  
+                loadUsersAndTags(request);
                 request.getRequestDispatcher("/views/dashboard/manager/tasks/create.jsp").forward(request, response);
                 return;
             }
 
             if (!TaskValidation.isValidTags(tagIds)) {
                 request.setAttribute("error", "At least one tag must be selected.");
-                loadUsersAndTags(request);  
+                loadUsersAndTags(request);
                 request.getRequestDispatcher("/views/dashboard/manager/tasks/create.jsp").forward(request, response);
                 return;
             }
 
             if (!TaskValidation.isValidStartDate(startDate)) {
                 request.setAttribute("error", "Start date must be at least 3 days ahead of today.");
-                loadUsersAndTags(request);  
+                loadUsersAndTags(request);
                 request.getRequestDispatcher("/views/dashboard/manager/tasks/create.jsp").forward(request, response);
                 return;
             }
 
             if (!TaskValidation.isValidDueDate(startDate, dueDate)) {
                 request.setAttribute("error", "Due date must be at least one day after the start date.");
-                loadUsersAndTags(request);  
+                loadUsersAndTags(request);
                 request.getRequestDispatcher("/views/dashboard/manager/tasks/create.jsp").forward(request, response);
                 return;
             }
@@ -187,15 +196,17 @@ public class TaskServlet extends HttpServlet {
             task.setStatus(TaskStatus.NEW);
 
 
-            User creator = userService.findUserById(creatorId);
-            User assignedUser = userService.findUserById(assignedUserId);
-            task.setCreator(creator);
-            task.setAssignedUser(assignedUser);
+            Optional<User> optionalCreator = userService.findUserById(creatorId);
+            Optional<User> optionalAssignedUser = userService.findUserById(assignedUserId);
+
+            optionalCreator.ifPresent(task::setCreator);
+            optionalAssignedUser.ifPresent(task::setAssignedUser);
+
 
             if (tagIds != null) {
                 for (String tagId : tagIds) {
-                    Tag tag = tagService.findTagById(Long.parseLong(tagId));
-                    task.getTags().add(tag);
+                    Optional<Tag> tag = tagService.findTagById(Long.parseLong(tagId));
+                    tag.ifPresent(task.getTags()::add);
                 }
             }
 
@@ -213,8 +224,9 @@ public class TaskServlet extends HttpServlet {
 
     private void loadUsersAndTags(HttpServletRequest request) {
         List<User> users = userService.findAllUsers();
-        List<Tag> tags = tagService.findAllTags();
+        Optional<List<Tag>> tagListOptional = tagService.findAllTags();
+        List<Tag> tagList = tagListOptional.orElse(List.of());
         request.setAttribute("users", users);
-        request.setAttribute("tags", tags);
+        request.setAttribute("tagList", tagList);
     }
 }

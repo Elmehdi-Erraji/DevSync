@@ -5,6 +5,7 @@ import domain.Task;
 import domain.User;
 import domain.enums.RequestStatus;
 import domain.enums.RequestType;
+import repository.UserRepository;
 import service.RequestService;
 import service.TaskService;
 import service.UserService;
@@ -31,7 +32,7 @@ public class RequestServlet extends HttpServlet {
         try {
             requestService = new RequestService();
             taskService = new TaskService();
-            userService = new UserService();
+            userService = new UserService(new UserRepository());
         } catch (Exception e) {
             throw new ServletException("Failed to initialize RequestServlet", e);
         }
@@ -182,11 +183,11 @@ public class RequestServlet extends HttpServlet {
         if (task == null) {
             throw new IllegalArgumentException("Task not found.");
         }
-        User assignedUser = userService.findUserById(assignedUserId);
+        Optional<User> optionalAssignedUser = userService.findUserById(assignedUserId);
 
-        if (assignedUser == null) {
-            throw new IllegalArgumentException("Assigned user not found.");
-        }
+        User assignedUser = optionalAssignedUser
+                .orElseThrow(() -> new IllegalArgumentException("Assigned user not found."));
+
 
         task.setAssignedUser(assignedUser);
         task.setRefused(true);

@@ -2,6 +2,7 @@ package web.controller.manager;
 
 import domain.User;
 import domain.enums.Role;
+import repository.UserRepository;
 import service.UserService;
 import util.PasswordUtils;
 
@@ -16,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @WebServlet("/manager/users")
@@ -25,7 +27,7 @@ public class UserServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         try {
-            userService = new UserService();
+            userService = new UserService(new UserRepository());
         } catch (Exception e) {
             throw new ServletException("Failed to initialize UserServlet", e);
         }
@@ -36,12 +38,13 @@ public class UserServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if (action == null) {
-            List<User> userList = userService.findAllUsers();
+            Optional<List<User>> userListOptional = Optional.ofNullable(userService.findAllUsers());
+
+            List<User> userList = userListOptional.orElse(List.of());
 
             List<User> filteredUsers = userList.stream()
-                            .filter(user -> user.getRole() == Role.USER)
-                            .collect(Collectors.toList());
-
+                    .filter(user -> user.getRole() == Role.USER)
+                    .collect(Collectors.toList());
 
             int totalUsers = filteredUsers.size();
 
@@ -49,12 +52,20 @@ public class UserServlet extends HttpServlet {
             request.setAttribute("totalUsers", totalUsers);
 
             request.getRequestDispatcher("/views/dashboard/manager/users/home.jsp").forward(request, response);
-        } else if (action.equals("edit")) {
+        }
+        else if (action.equals("edit")) {
             Long id = Long.parseLong(request.getParameter("id"));
-            User user = userService.findUserById(id);
-            request.setAttribute("user", user);
-            request.getRequestDispatcher("/views/dashboard/manager/users/edit.jsp").forward(request, response);
-        } else if (action.equals("create")) {
+            Optional<User> userOptional = userService.findUserById(id);
+
+            if (userOptional.isPresent()) {
+                request.setAttribute("user", userOptional.get());
+                request.getRequestDispatcher("/views/dashboard/manager/users/edit.jsp").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "User not found.");
+                request.getRequestDispatcher("/views/dashboard/manager/users/error.jsp").forward(request, response);
+            }
+        }
+        else if (action.equals("create")) {
             request.getRequestDispatcher("/views/dashboard/manager/users/create.jsp").forward(request, response);
         }
     }
@@ -72,6 +83,13 @@ public class UserServlet extends HttpServlet {
             String username = request.getParameter("username");
             String email = request.getParameter("email");
             String roleParam = request.getParameter("role");
+
+            // Print all input values to debug
+            System.out.println("Received POST data:");
+            System.out.println("ID: " + id);
+            System.out.println("Username: " + username);
+            System.out.println("Email: " + email);
+            System.out.println("Role: " + roleParam);
 
             if (username == null || email == null || roleParam == null) {
                 throw new ServletException("Required form fields are missing");
@@ -91,6 +109,10 @@ public class UserServlet extends HttpServlet {
 
             if (id != null && !id.isEmpty()) {
                 user.setId((int) Long.parseLong(id));
+
+                // Print user object before calling update
+                System.out.println("Updating user: " + user);
+
                 userService.updateUser(user);
             } else {
                 String password = request.getParameter("password");
@@ -100,6 +122,9 @@ public class UserServlet extends HttpServlet {
 
                 String hashedPassword = PasswordUtils.hashPassword(password);
                 user.setPassword(hashedPassword);
+
+                // Print user object before insertion
+                System.out.println("Inserting new user: " + user);
 
                 userService.insertUser(user);
             }

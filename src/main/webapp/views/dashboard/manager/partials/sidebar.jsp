@@ -86,24 +86,6 @@
                     </ul>
                 </div>
             </li>
-
-            <!-- Token Management -->
-            <li class="side-nav-item">
-                <a data-bs-toggle="collapse" href="#tokenManagement" aria-expanded="false" aria-controls="tokenManagement" class="side-nav-link">
-                    <i class="ri-key-line"></i>
-                    <span>Token Management</span>
-                    <span class="menu-arrow"></span>
-                </a>
-                <div class="collapse" id="tokenManagement">
-                    <ul class="side-nav-second-level">
-                        <li><a href="#">Create Token</a></li>
-                        <li><a href="#">Read Token</a></li>
-                        <li><a href="#">Update Token</a></li>
-                        <li><a href="#">Delete Token</a></li>
-                    </ul>
-                </div>
-            </li>
-
         </ul>
     </div>
 </div>

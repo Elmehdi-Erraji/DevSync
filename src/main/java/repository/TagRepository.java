@@ -1,61 +1,76 @@
+// TagRepository.java
 package repository;
 
 import domain.Tag;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.Persistence;
 
 import java.util.List;
+import java.util.Optional;
 
-public class TagRepository {
+public class TagRepository implements TagRepositoryInterface {
 
-    private EntityManager entityManager;
+    private static final EntityManagerFactory entityManagerFactory =
+            Persistence.createEntityManagerFactory("your-persistence-unit-name");
 
-    public TagRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    private final EntityManager entityManager;
+
+    public TagRepository() {
+        this.entityManager = entityManagerFactory.createEntityManager();
     }
 
-    public List<Tag> findAll() {
-        TypedQuery<Tag> query = entityManager.createQuery("SELECT t FROM Tag t", Tag.class);
-        return query.getResultList();
+    @Override
+    public Optional<List<Tag>> findAll() {
+        List<Tag> result = entityManager.createQuery("SELECT t FROM Tag t", Tag.class)
+                .getResultList();
+        return result.isEmpty() ? Optional.empty() : Optional.of(result);
     }
 
-    public Tag findById(Long id) {
-        return entityManager.find(Tag.class, id);
+    @Override
+    public Optional<Tag> findById(Long id) {
+        return Optional.ofNullable(entityManager.find(Tag.class, id));
     }
 
-    public void save(Tag tag) {
+    @Override
+    public Tag save(Tag tag) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
             if (tag.getId() == null) {
                 entityManager.persist(tag);
             } else {
-                entityManager.merge(tag);
+                tag = entityManager.merge(tag);
             }
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
-            throw e;
+            throw e; // Consider logging the exception for better tracking
         }
+        return tag;
     }
 
-    public void delete(Long id) {
+    @Override
+    public boolean delete(Long id) {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
             Tag tag = entityManager.find(Tag.class, id);
             if (tag != null) {
                 entityManager.remove(tag);
+                transaction.commit();
+                return true;
             }
-            transaction.commit();
+            transaction.rollback();
         } catch (Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
-            throw e;
+            throw e; // Consider logging the exception for better tracking
         }
+        return false;
     }
 }
