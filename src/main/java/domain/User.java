@@ -39,14 +39,11 @@ public class User {
 
     private int monthlyTokens = 1;
 
-
     @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
     private List<Task> assignedTasks;
 
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     private List<Task> createdTasks;
-
-
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Request> requests;

@@ -238,7 +238,7 @@
                                         <label for="tags" class="form-label">Tags</label>
                                         <select multiple class="form-select" id="tags" name="tags[]">
                                             <%
-                                                List<Tag> allTags = (List<Tag>) request.getAttribute("allTags");
+                                                List<Tag> allTags = (List<Tag>) request.getAttribute("tagList");
                                                 for (Tag tag : allTags) {
                                             %>
                                             <option value="<%= tag.getId() %>"><%= tag.getName() %></option>

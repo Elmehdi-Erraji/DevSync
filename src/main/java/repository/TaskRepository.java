@@ -1,19 +1,19 @@
 package repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import domain.Task;
 
 
 import java.util.List;
 
 public class TaskRepository {
-    private EntityManager entityManager;
+    private static final EntityManagerFactory entityManagerFactory =
+            Persistence.createEntityManagerFactory("your-persistence-unit-name");
 
-    public TaskRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    private final EntityManager entityManager;
+
+    public TaskRepository() {
+        this.entityManager = entityManagerFactory.createEntityManager();
     }
 
     public List<Task> findAllTasks() {

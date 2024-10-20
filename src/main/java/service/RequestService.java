@@ -90,7 +90,6 @@ public class RequestService {
                 .orElseThrow(() -> new RequestException("Request not found with ID: " + requestId));
     }
 
-
     public List<Request> findPendingRequests() {
         return requestRepository.findAllPendingRequests();
     }
@@ -100,5 +99,9 @@ public class RequestService {
             throw new IllegalArgumentException("Request ID cannot be null when updating.");
         }
         requestRepository.updateRequest(request);
+    }
+
+    public Optional<Request> findRequestByTaskAndUser(Long taskId, Long userId) {
+        return requestRepository.findRequestByTaskAndUser(taskId, userId);
     }
 }

@@ -1,70 +1,63 @@
 package service;
 
-
 import exception.UserException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import domain.User;
+import repository.TagRepositoryInterface;
 import repository.UserRepository;
+import repository.UserRepositoryInterface;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserService {
 
-    private final UserRepository userRepository;
 
-    public UserService() {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("your-persistence-unit-name");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        this.userRepository = new UserRepository(entityManager);
+    private final UserRepositoryInterface userRepository;
+
+    public UserService(UserRepositoryInterface userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public void insertUser(User user) {
-        if (user == null || user != new User()) {
-            throw new UserException("User cannot be null.");
-        }
-        userRepository.insertUser(user);
-    }
-
-    public void updateUser(User user) {
-        if (user == null || user != new User()) {
-            throw new UserException("User cannot be null.");
-        }
-        userRepository.updateUser(user);
-    }
-
-    public void deleteUser(Long userId) {
-        if (userId == null) {
-            throw new UserException("User ID cannot be null.");
-        }
-        userRepository.deleteUser(userId);
-    }
-
-    public User findUserById(Long userId) {
-        if (userId == null) {
-            throw new UserException("User ID cannot be null.");
-        }
-        User user = userRepository.findUserById(userId);
+    public User insertUser(User user) {
         if (user == null) {
-            throw new UserException("User not found with ID: " + userId);
+            throw new UserException("User cannot be null.");
         }
-        return user;
+        return userRepository.insertUser(user);
+    }
+
+    public User updateUser(User user) {
+        if (user == null) {
+            throw new UserException("User cannot be null.");
+        }
+        return userRepository.updateUser(user);
+    }
+
+    public boolean deleteUser(Long userId) {
+        if (userId == null) {
+            throw new UserException("User ID cannot be null.");
+        }
+        return userRepository.deleteUser(userId); // Ensure this method returns boolean.
+    }
+
+    public Optional<User> findUserById(Long userId) {
+        if (userId == null) {
+            throw new UserException("User ID cannot be null.");
+        }
+        return userRepository.findUserById(userId); // Directly return Optional from repository.
     }
 
     public List<User> findAllUsers() {
         return userRepository.findAllUsers();
     }
 
-    public User findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
             throw new UserException("Email cannot be null or empty.");
         }
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new UserException("User not found with email: " + email);
-        }
-        return user;
+        return userRepository.findByEmail(email); // Directly return Optional from repository.
     }
 
     public void updateUserTokens(Long userId, Integer dailyTokens, Integer monthlyTokens) {
@@ -72,10 +65,8 @@ public class UserService {
             throw new UserException("User ID cannot be null.");
         }
 
-        User user = userRepository.findUserById(userId);
-        if (user == null) {
-            throw new UserException("User not found with ID: " + userId);
-        }
+        Optional<User> optionalUser = userRepository.findUserById(userId);
+        User user = optionalUser.orElseThrow(() -> new UserException("User not found with ID: " + userId));
 
         if (dailyTokens != null) {
             user.setDailyTokens(dailyTokens);
@@ -83,8 +74,6 @@ public class UserService {
         if (monthlyTokens != null) {
             user.setMonthlyTokens(monthlyTokens);
         }
-        userRepository.insertUser(user);
+        userRepository.updateUser(user); // Ensure this updates the user properly.
     }
-
-
 }
